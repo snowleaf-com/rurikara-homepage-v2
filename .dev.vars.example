@@ -1,0 +1,8 @@
+# Resend（お問い合わせメール）
+RESEND_API_KEY=
+MAIL_FROM=るりから鍼灸・接骨院 <ruri-kara@ruri-kara.com>
+MAIL_TO=
+
+# Instagram Graph API
+INSTAGRAM_ACCESS_TOKEN=
+INSTAGRAM_USER_ID=

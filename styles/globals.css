@@ -1,0 +1,34 @@
+@import 'tailwindcss';
+
+@source "../src/**/*.{ts,tsx}";
+
+@theme inline {
+  --font-sans: 'Zen Maru Gothic', 'Hiragino Kaku Gothic ProN', 'Yu Gothic',
+    sans-serif;
+  --color-brand: #f7b133;
+  --color-accent: #82cdde;
+  --color-text: #181818;
+  --color-muted: #616161;
+  --color-bg: #ffffff;
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+  }
+  body {
+    color: var(--color-text);
+    background: var(--color-bg);
+    font-family: var(--font-sans);
+    line-height: 1.8;
+  }
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+}
