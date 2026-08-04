@@ -1,6 +1,6 @@
 # rurikara-homepage-v2
 
-るりから鍼灸・接骨院（https://ruri-kara.com）の Cloudflare 向けリプレイス。
+Cloudflare 向けリプレイス。
 
 旧構成（Next.js + PHP）を、Hono + Cloudflare Workers に置き換えます。
 
