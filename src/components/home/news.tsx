@@ -1,3 +1,5 @@
+import { InstaFeed } from './insta-feed';
+
 const YOUTUBE_CHANNEL =
   'https://www.youtube.com/@%E3%82%8B%E3%82%8A%E3%81%8B%E3%82%89%E3%83%81%E3%83%A3%E3%83%B3%E3%83%8D%E3%83%AB';
 const YOUTUBE_ID = 'DxEjQuFDKKc';
@@ -9,17 +11,8 @@ export function News() {
         お知らせ
         <span class="sectionSubTitle">NEWS</span>
       </h2>
-      <div class="insta effect d_08">
-        <p style="text-align:center;margin-bottom:1.5em">
-          Instagram 投稿の表示は今後接続予定です。
-          <a
-            href="https://www.instagram.com/yaoc.0601/"
-            target="_blank"
-            rel="noreferrer"
-          >
-            @yaoc.0601
-          </a>
-        </p>
+      <div class="effect d_08">
+        <InstaFeed limit={2} showMoreLink moreHref="/news" />
       </div>
       <hr class="youtubeDivider" />
       <div class="youtubeSection effect d_10">

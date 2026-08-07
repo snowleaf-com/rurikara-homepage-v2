@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import { Layout } from './components/layout';
 import { getContentPage } from './data/content-pages';
+import insta from './routes/api/insta';
 import mail from './routes/api/mail';
 import { AboutPage } from './routes/about';
 import { AccidentPage } from './routes/accident';
@@ -11,6 +12,7 @@ import { ContentPage } from './routes/content';
 import { ContentDetailPage } from './routes/content-detail';
 import { FaqPage } from './routes/faq';
 import { HomePage } from './routes/home';
+import { NewsPage } from './routes/news';
 import { OwnExpensePage } from './routes/own-expense';
 import type { AppEnv } from './types';
 
@@ -23,7 +25,10 @@ app.use('*', async (c, next) => {
   c.header('X-Frame-Options', 'SAMEORIGIN');
   const path = new URL(c.req.url).pathname;
   if (path.startsWith('/api/')) {
-    c.header('Cache-Control', 'no-store');
+    // /api/insta はルート側で短時間キャッシュを付与する
+    if (!path.startsWith('/api/insta')) {
+      c.header('Cache-Control', 'no-store');
+    }
   } else if (
     path === '/' ||
     path.startsWith('/contact') ||
@@ -42,11 +47,20 @@ app.get('/api/health', (c) => {
 });
 
 app.route('/api/mail', mail);
+app.route('/api/insta', insta);
 
 app.get('/', (c) => {
   return c.html(
     <Layout preloadImage="/img/slide1.webp">
       <HomePage />
+    </Layout>
+  );
+});
+
+app.get('/news', (c) => {
+  return c.html(
+    <Layout title="お知らせ｜るりから鍼灸・接骨院">
+      <NewsPage />
     </Layout>
   );
 });
