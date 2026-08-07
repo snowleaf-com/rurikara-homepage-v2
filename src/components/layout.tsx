@@ -10,6 +10,7 @@ type LayoutProps = {
   children: Child;
   scripts?: string[];
   preloadImage?: string;
+  hideFooter?: boolean;
 };
 
 const DEFAULT_TITLE = 'るりから鍼灸・接骨院｜沼津市井出の鍼灸接骨院';
@@ -21,7 +22,8 @@ export function Layout({
   description = DEFAULT_DESCRIPTION,
   children,
   scripts = [],
-  preloadImage
+  preloadImage,
+  hideFooter = false
 }: LayoutProps) {
   const pageScripts = ['/js/site.js', ...scripts];
 
@@ -50,6 +52,12 @@ export function Layout({
           <link rel="icon" href="/img/icon.svg" type="image/svg+xml" />
           <link rel="apple-touch-icon" href="/img/apple-touch-icon.png" />
           <link rel="dns-prefetch" href="https://i.ytimg.com" />
+          <link rel="preconnect" href="https://fonts.googleapis.com" />
+          <link
+            rel="preconnect"
+            href="https://fonts.gstatic.com"
+            crossorigin="anonymous"
+          />
           {preloadImage
             ? html`<link
                 rel="preload"
@@ -63,20 +71,29 @@ export function Layout({
             : null}
           <link rel="preload" as="image" href="/img/top_logo.svg" />
           {html`<style>${CRITICAL_CSS}</style>`}
+          {/*
+            styles.css を非同期(media=print→all)にすると、critical に無い
+            .cardImg 等が後から当たり「大きい→通常」のFOUCが起きるため同期読込にする
+          */}
+          <link rel="stylesheet" href="/styles.css" />
+          {/* 日本語は unicode-range 分割のため Google Fonts のまま（自前フルは数MB） */}
           {html`<link
             rel="stylesheet"
-            href="/styles.css"
+            href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700&display=swap"
             media="print"
             onload="this.media='all'"
           />`}
-          {html`<noscript
-            ><link rel="stylesheet" href="/styles.css"
-          /></noscript>`}
+          <noscript>
+            <link
+              rel="stylesheet"
+              href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700&display=swap"
+            />
+          </noscript>
         </head>
         <body>
           <Header />
           {children}
-          <Footer />
+          {hideFooter ? null : <Footer />}
           {pageScripts.map((src) => (
             <script key={src} src={src} defer />
           ))}

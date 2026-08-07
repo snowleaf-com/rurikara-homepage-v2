@@ -334,18 +334,4 @@
     }
   });
 
-  // フォントは LCP 後に遅延ロード（ブランド維持しつつ速度優先）
-  const loadFonts = () => {
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href =
-      'https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700&display=swap';
-    document.head.appendChild(link);
-  };
-  if ('requestIdleCallback' in window) {
-    requestIdleCallback(loadFonts, { timeout: 2000 });
-  } else {
-    window.addEventListener('load', () => setTimeout(loadFonts, 1));
-  }
-
 })();

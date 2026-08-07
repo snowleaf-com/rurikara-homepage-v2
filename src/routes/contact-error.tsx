@@ -1,22 +1,24 @@
+import { Breadcrumb } from '../components/details/breadcrumb';
+import { DetailsHeader } from '../components/details/details-header';
+
 export function ContactErrorPage() {
   return (
-    <main class="contactPage" id="top">
-      <div class="sectionNormal" style="text-align:center;padding-bottom:80px">
-        <h1 class="sectionTitle">送信エラー</h1>
-        <p class="paragraph">
-          送信に失敗しました。
-          <br />
-          お手数ですが時間をおいて再度お試しいただくか、お電話ください。
-          <br />
-          <a href="tel:09042159695">090-4215-9695</a>
-        </p>
-        <div class="btn">
-          <a href="/contact">
-            <span class="arrow">›</span>
-            お問い合わせへ戻る
-          </a>
-        </div>
+    <>
+      <DetailsHeader title="エラー" />
+      <Breadcrumb items={[{ url: '/contact', name: 'お問い合わせ' }]} />
+      <div class="contentWrap">
+        <main class="contactPage" id="top">
+          <p class="paragraph">
+            メール送信エラーが発生しました。
+            <br />
+            <br />
+            大変お手数ですが、お電話かLINEかInstagramでお問い合わせください。
+            <br />
+            <br />
+            <a href="/">ホームへ戻る</a>
+          </p>
+        </main>
       </div>
-    </main>
+    </>
   );
 }
