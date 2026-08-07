@@ -182,6 +182,110 @@
     });
   });
 
+  // Instagram フィード（トップ / 一覧で共通）
+  const escapeHtml = (value) =>
+    String(value ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+
+  const renderInstaFeed = (root, data) => {
+    const loading = root.querySelector('[data-insta-loading]');
+    const status = root.querySelector('[data-insta-status]');
+    const results = root.querySelector('[data-insta-results]');
+    const more = root.querySelector('[data-insta-more]');
+    const profileUrl =
+      root.getAttribute('data-profile-url') ||
+      'https://www.instagram.com/raoc.0601/';
+
+    if (loading) {
+      loading.hidden = true;
+      loading.setAttribute('hidden', '');
+    }
+
+    const media = Array.isArray(data?.media) ? data.media : [];
+    if (!media.length) {
+      if (status) {
+        status.hidden = false;
+        status.removeAttribute('hidden');
+        status.textContent = '投稿がありません';
+      }
+      return;
+    }
+
+    const items = media
+      .map((item) => {
+        // 改行は残し、連続空白だけ整える（表示は <br>）
+        const caption = escapeHtml(String(item.caption || '').trim())
+          .replace(/\r\n?/g, '\n')
+          .replace(/[^\S\n]+/g, ' ')
+          .replace(/\n{3,}/g, '\n\n')
+          .replace(/\n/g, '<br>');
+        const mediaUrl = escapeHtml(item.media || '');
+        const permalink = escapeHtml(item.permalink || '#');
+        const postTime = escapeHtml(item.postTime || '');
+        return `<li class="instaPost">
+          <a class="instaLink" href="${permalink}" target="_blank" rel="noopener noreferrer">
+            <div class="instaMedia">
+              <img src="${mediaUrl}" alt="" loading="lazy" decoding="async" width="480" height="480" />
+            </div>
+            <div class="instaBody">
+              <time class="instaDate">${postTime}</time>
+              <p class="instaCaption">${caption}</p>
+              <span class="instaCta">Instagramで見る</span>
+            </div>
+          </a>
+        </li>`;
+      })
+      .join('');
+
+    if (results) {
+      results.hidden = false;
+      results.removeAttribute('hidden');
+      results.innerHTML = `<ul class="instaPostWrap">${items}</ul>
+        <div class="postedBy">
+          <span class="postedByLabel">@raoc.0601</span>
+          <a href="${escapeHtml(profileUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Instagramプロフィール">
+            <svg class="instaProfileIcon" viewBox="0 0 448 512" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/></svg>
+          </a>
+        </div>`;
+    }
+    if (more) {
+      more.hidden = false;
+      more.removeAttribute('hidden');
+    }
+  };
+
+  document.querySelectorAll('[data-insta-feed]').forEach((root) => {
+    const limit = root.getAttribute('data-limit') || '2';
+    const loading = root.querySelector('[data-insta-loading]');
+    const status = root.querySelector('[data-insta-status]');
+    fetch(`/api/insta?limit=${encodeURIComponent(limit)}`, {
+      headers: { Accept: 'application/json' }
+    })
+      .then(async (res) => {
+        const json = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          throw new Error(json.error || `fetch failed (${res.status})`);
+        }
+        renderInstaFeed(root, json);
+      })
+      .catch((err) => {
+        if (loading) {
+          loading.hidden = true;
+          loading.setAttribute('hidden', '');
+        }
+        if (status) {
+          status.hidden = false;
+          status.removeAttribute('hidden');
+          status.textContent = 'データの取得に失敗しました';
+        }
+        console.error('[insta]', err);
+      });
+  });
+
   document.querySelectorAll('.youtubeLite').forEach((button) => {
     button.addEventListener('click', () => {
       const id = button.getAttribute('data-youtube-id');

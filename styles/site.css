@@ -883,20 +883,7 @@ table td {
   }
 }
 
-/* インスタ画像 */
-.instaImg {
-  width: 100%;
-  height: 100%;
-}
-.instaImg img {
-  border-radius: 10px;
-}
-@media (max-width: 768px) {
-  /* スマホ向けスタイル */
-  .instaImg img {
-    object-fit: none;
-  }
-}
+/* インスタ画像（詳細は .insta セクション側） */
 
 /* マップ内ロゴ */
 .mapLogo {
@@ -1760,60 +1747,94 @@ table td {
 }
 
 .insta {
-  padding: 0 2.5%;
-  width: clamp(240px, 100%, 1280px);
-  margin: 40px auto;
-  font-size: 16px;
+  width: min(100%, 1200px);
+  margin: 32px auto 8px;
+  padding: 0;
+  font-size: var(--fs-body);
 }
 .instaPostWrap {
-  box-sizing: border-box;
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 .instaPost {
-  display: flex;
   list-style: none;
-  box-sizing: border-box;
-  width: 48%;
-  height: 240px;
-  position: relative;
-  background-color: #fff;
-  border-radius: 20px;
-  padding: 10px;
-  margin-bottom: 2em;
+  margin: 0;
+  min-width: 0;
 }
 .instaLink {
-  display: flex;
+  display: grid;
+  grid-template-columns: 42% 1fr;
+  align-items: stretch;
+  min-height: 220px;
   text-decoration: none;
-  color: #444;
+  color: #423332;
+  background: #fff;
+  border: 1px solid rgba(66, 51, 50, 0.08);
+  border-radius: 18px;
+  overflow: hidden;
+  transition: border-color 0.25s ease;
 }
-.postTime {
-  background-color: #f7b133;
+.instaLink:hover {
+  border-color: rgba(247, 177, 51, 0.45);
+  color: #423332;
+}
+.instaMedia {
+  position: relative;
+  overflow: hidden;
+  background: #e8eef1;
+  min-height: 100%;
+}
+.instaMedia img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.instaBody {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  color: #fff;
+  flex-direction: column;
+  gap: 10px;
+  padding: 22px 22px 18px;
+  min-width: 0;
+}
+.instaDate {
+  display: inline-block;
+  align-self: flex-start;
   font-size: 12px;
-  border-radius: 20px;
-  position: absolute;
-  bottom: 5px;
-  right: 5px;
-  z-index: 10;
-  padding-left: 10px;
-  padding-right: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #f7b133;
+  line-height: 1.2;
 }
-.innerItem {
+.instaCaption {
+  margin: 0;
   flex: 1;
-  align-self: center;
-  margin-right: 16px;
+  font-size: 14px;
+  line-height: 1.75;
+  color: #423332;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 5;
+  overflow: hidden;
+  word-break: break-word;
 }
-.innerItem2 {
-  flex: 2;
-  line-height: 32px;
-  padding: 10px;
-  overflow-y: auto; /* 垂直方向にスクロールを有効にする */
-  overflow-x: hidden;
+.instaCta {
+  margin-top: auto;
+  font-size: 13px;
+  font-weight: 700;
+  color: #423332;
+  letter-spacing: 0.02em;
+}
+.instaCta::after {
+  content: " ›";
+  color: #f7b133;
+}
+.instaLink:hover .instaCta {
+  color: #f7b133;
 }
 
 .postedBy {
@@ -1821,13 +1842,60 @@ table td {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  font-size: 12px;
+  gap: 8px;
+  margin: 18px 0 4px;
+  font-size: 13px;
+  color: #6b5e5d;
+}
+.postedByLabel {
+  letter-spacing: 0.02em;
+}
+.postedBy a {
+  display: inline-flex;
+  color: #423332;
+  transition: color 0.2s ease;
+}
+.postedBy a:hover {
+  color: #e1306c;
+}
+.instaStatus {
+  text-align: center;
+  margin: 1.5em 0;
+}
+.instaMoreBtn {
+  margin: 20px auto 8px;
+  text-align: center;
+}
+.newsPage {
+  max-width: 1200px;
+  width: 90%;
+  margin: 0 auto;
+  padding-bottom: 40px;
+}
+.newsPageLead {
+  font-size: var(--fs-body);
+  text-align: center;
+  line-height: 2.2;
+  margin: 0 0 24px;
+}
+@media screen and (max-width: 959px) {
+  .newsPageLead {
+    font-size: var(--fs-body-compact);
+    text-align: left;
+  }
 }
 .loadingElement {
-  height: 100%;
+  min-height: 160px;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+/* display:flex が [hidden] を上書きしてスピナーが消えないのを防ぐ */
+.loadingElement[hidden],
+.instaStatus[hidden],
+[data-insta-results][hidden],
+.instaMoreBtn[hidden] {
+  display: none !important;
 }
 .loader {
   width: 50px;
@@ -1847,28 +1915,45 @@ table td {
 }
 
 @media (max-width: 959px) {
-  .instaPost {
-    width: 49%;
-    height: 200px;
+  .instaPostWrap {
+    gap: 14px;
   }
-  .insta {
-    padding: 0;
-    font-size: 14px;
+  .instaLink {
+    min-height: 190px;
+  }
+  .instaBody {
+    padding: 16px 14px 14px;
+    gap: 8px;
+  }
+  .instaCaption {
+    font-size: 13px;
+    -webkit-line-clamp: 3;
   }
 }
 
 @media (max-width: 768px) {
-  /* スマートフォン向けのスタイル */
-  .insta {
+  .instaPostWrap {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .instaLink {
+    grid-template-columns: 112px 1fr;
+    min-height: 112px;
+  }
+  .instaMedia {
+    min-height: 112px;
+  }
+  .instaBody {
+    padding: 12px 12px 10px;
+    gap: 6px;
+  }
+  .instaCaption {
+    font-size: 13px;
+    line-height: 1.6;
+    -webkit-line-clamp: 2;
+  }
+  .instaCta {
     font-size: 12px;
-  }
-  .instaPost {
-    width: 100%;
-    height: 150px;
-  }
-  .innerItem2 {
-    line-height: 24px;
-    padding: 5px
   }
   .youtubeSection {
     flex-direction: column;
