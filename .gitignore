@@ -6,3 +6,6 @@ dist/
 *.log
 worker-configuration.d.ts
 public/styles.css
+
+# build intermediates
+styles/critical.min.css
