@@ -11,6 +11,7 @@ const FOOTER_NAV = [
   { href: '/content/sports', label: 'スポーツ障害', indent: true },
   { href: '/content/accident', label: '交通事故・労災', indent: true },
   { href: '/content/own-expense', label: '自費施術について', indent: true },
+  { href: '/news', label: 'お知らせ' },
   { href: '/faq', label: 'よくあるご質問' },
   { href: '/contact', label: 'お問い合わせ' }
 ] as const;

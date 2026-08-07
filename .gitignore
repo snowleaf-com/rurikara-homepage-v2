@@ -9,3 +9,5 @@ public/styles.css
 
 # build intermediates
 styles/critical.min.css
+
+.create-pr
