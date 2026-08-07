@@ -27,14 +27,15 @@ npm run dev
 | `MAIL_TO` | 管理者への通知先 |
 
 ```env
-MAIL_FROM="るりから鍼灸・接骨院 <ruri-kara@ruri-kara.com>"
+MAIL_FROM="Clinic Name <noreply@example.com>"
+MAIL_TO=admin@example.com
 ```
 
-**重要:** `ruri-kara.com` を [Resend Domains](https://resend.com/domains) で DNS 認証しないと送信できません。
+**重要:** 送信に使うドメインを [Resend Domains](https://resend.com/domains) で DNS 認証しないと送信できません。
 未認証のまま試す場合は、一時的に次を使えます（宛先は Resend 登録メールのみ）。
 
 ```env
-MAIL_FROM="るりから鍼灸・接骨院 <beth.t@example.com>"
+MAIL_FROM="Clinic Name <beth.t@example.com>"
 ```
 
 失敗時はお問い合わせ画面に Resend のエラーメッセージが表示されます。

@@ -1,14 +1,14 @@
 # Resend（お問い合わせメール）
-# 1. https://resend.com/domains で ruri-kara.com を追加し DNS 認証する
+# 1. https://resend.com/domains で送信ドメインを追加し DNS 認証する
 # 2. API キーを発行する
 #
 # ドメイン未認証のあいだは、Resend のテスト差出人のみ使えます。
 # その場合の宛先は Resend アカウントの登録メールのみです。
-# MAIL_FROM="るりから鍼灸・接骨院 <beth.t@example.com>"
+# MAIL_FROM="Clinic Name <beth.t@example.com>"
 
 RESEND_API_KEY=re_xxxxxxxx
-MAIL_FROM="るりから鍼灸・接骨院 <ruri-kara@ruri-kara.com>"
-MAIL_TO=yy.dec5@gmail.com
+MAIL_FROM="Clinic Name <noreply@example.com>"
+MAIL_TO=admin@example.com
 
 # Instagram Graph API（Business/Creator アカウント）
 # Meta for Developers で長期トークンと Instagram User ID を取得
