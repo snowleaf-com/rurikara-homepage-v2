@@ -4,9 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "npm run build:css && wrangler dev",
-    "build": "npm run build:css",
-    "build:css": "tailwindcss -i ./styles/globals.css -o ./public/styles.css --minify",
+    "dev": "npm run build:assets && wrangler dev",
+    "build:css": "node scripts/minify-css.mjs",
+    "build:assets": "node scripts/minify-css.mjs",
+    "build": "npm run build:assets",
     "deploy": "npm run build && wrangler deploy",
     "cf-typegen": "wrangler types --env-interface CloudflareBindings"
   },
@@ -16,7 +17,10 @@
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250726.0",
     "@tailwindcss/cli": "^4.1.18",
+    "clean-css": "^5.3.3",
+    "clean-css-cli": "^5.6.3",
     "tailwindcss": "^4.1.18",
+    "terser": "^5.49.1",
     "typescript": "^5.7.3",
     "wrangler": "^4.26.0"
   }
