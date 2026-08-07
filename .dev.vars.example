@@ -10,6 +10,7 @@ RESEND_API_KEY=re_xxxxxxxx
 MAIL_FROM="るりから鍼灸・接骨院 <ruri-kara@ruri-kara.com>"
 MAIL_TO=yy.dec5@gmail.com
 
-# Instagram Graph API（次の実装で使用）
+# Instagram Graph API（Business/Creator アカウント）
+# Meta for Developers で長期トークンと Instagram User ID を取得
 INSTAGRAM_ACCESS_TOKEN=
 INSTAGRAM_USER_ID=
