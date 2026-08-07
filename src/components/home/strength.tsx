@@ -15,7 +15,9 @@ export function Strength() {
           <span class="bold">柔道整復師・鍼灸師</span>
           の2つの国家資格を有していることで、捻挫や打撲、靭帯損傷といった
           <span class="bold">急性期のケガ</span>
-          から、肩こり、腰痛といった
+          から、
+          <br class="brPcOnly" />
+          肩こり、腰痛といった
           <span class="bold">慢性的な症状</span>
           へも、アプローチすることができます。
         </p>
