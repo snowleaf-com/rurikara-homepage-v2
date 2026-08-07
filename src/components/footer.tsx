@@ -125,7 +125,13 @@ export function Footer() {
               <nav>
                 <ul>
                   {FOOTER_NAV.map((item) => (
-                    <li class={item.indent ? 'indentedList' : undefined}>
+                    <li
+                      class={
+                        'indent' in item && item.indent
+                          ? 'indentedList'
+                          : undefined
+                      }
+                    >
                       <a href={item.href}>
                         <svg
                           class="footerChevron"
