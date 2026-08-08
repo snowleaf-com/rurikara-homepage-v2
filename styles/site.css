@@ -3511,7 +3511,7 @@ table td {
   max-width: 100%;
 }
 
-/* ===== hero ken burns（LCP後に .heroKenBurns を付与して開始） ===== */
+/* ===== hero ken burns（1枚目からすぐ開始。追加スライドは delay で位相をずらす） ===== */
 .background {
   overflow: hidden;
 }
@@ -3520,15 +3520,13 @@ table td {
 }
 .background .slide img {
   transform-origin: center center;
-}
-.background.heroKenBurns .slide img {
   will-change: transform;
   animation: kenBurns 20s linear infinite;
 }
-.background.heroKenBurns .slide:nth-child(2) img {
+.background .slide:nth-child(2) img {
   animation-delay: -6.5s;
 }
-.background.heroKenBurns .slide:nth-child(3) img {
+.background .slide:nth-child(3) img {
   animation-delay: -13s;
 }
 @keyframes kenBurns {
@@ -3540,7 +3538,7 @@ table td {
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .background.heroKenBurns .slide img {
+  .background .slide img {
     animation: none;
     will-change: auto;
   }

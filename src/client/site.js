@@ -132,8 +132,6 @@
       for (const meta of DEFERRED_SLIDES) {
         swiper.append(makeSlide(meta));
       }
-      const root = document.getElementById('hero-slides');
-      root?.classList.add('heroKenBurns');
       const slides = Array.from(swiper.querySelectorAll('[data-slide]'));
       if (slides.length < 2) return;
       let index = 0;
