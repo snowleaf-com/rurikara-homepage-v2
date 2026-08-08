@@ -12,8 +12,8 @@
   const heroSlides = document.getElementById('hero-slides');
   const indexTop = document.getElementById('top');
   const heroZoom = document.getElementById('hero-zoom');
-  // rAF で親をズーム（全スライド共通）。WAAPI/CSS は iOS「動きを減らす」で止まることがある
-  const ZOOM_MS = 38000;
+  // rAF で親をズーム（全スライド共通）。旧 Framer: 1→1.2 / 20s / linear
+  const ZOOM_MS = 20000;
   const ZOOM_TO = 1.2;
   let heroZoomRaf = 0;
   let heroZoomElapsed = 0;
@@ -140,8 +140,9 @@
   const swiper = document.getElementById('hero-swiper');
   if (swiper) {
     const slides = Array.from(swiper.querySelectorAll('[data-slide]'));
-    const SLIDE_MS = 10000;
-    const FADE_MS = 4500;
+    // 旧 Swiper: autoplay.delay 6000 / speed 3000（waitForTransition）
+    const SLIDE_DELAY_MS = 6000;
+    const FADE_MS = 3000;
 
     // ズームは #hero-zoom 一枚だけ（画像ごとの scale 差＝切替時の縮みを根絶）
     applyHeroZoom(0);
@@ -153,7 +154,7 @@
       slide.style.opacity = i === 0 ? '1' : '0';
     });
 
-    const crossfade = (from, to) => {
+    const crossfade = (from, to, done) => {
       const start = performance.now();
       to.classList.add('is-active');
       to.style.zIndex = '2';
@@ -171,17 +172,21 @@
         from.style.opacity = '0';
         from.style.zIndex = '';
         to.style.zIndex = '';
+        if (done) done();
       };
       requestAnimationFrame(step);
     };
 
     if (slides.length > 1) {
       let index = 0;
-      setInterval(() => {
-        const from = slides[index];
-        index = (index + 1) % slides.length;
-        crossfade(from, slides[index]);
-      }, SLIDE_MS);
+      const scheduleNext = () => {
+        window.setTimeout(() => {
+          const from = slides[index];
+          index = (index + 1) % slides.length;
+          crossfade(from, slides[index], scheduleNext);
+        }, SLIDE_DELAY_MS);
+      };
+      scheduleNext();
     }
   }
 
