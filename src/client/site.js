@@ -108,16 +108,13 @@
   const swiper = document.getElementById('hero-swiper');
   if (swiper) {
     const slides = Array.from(swiper.querySelectorAll('[data-slide]'));
-    const reduceMotion = window.matchMedia(
-      '(prefers-reduced-motion: reduce)'
-    ).matches;
-    const canAnimate =
-      !reduceMotion && typeof Element.prototype.animate === 'function';
+    // 旧サイトの Ken Burns は CSS で動いており prefers-reduced-motion を見ていなかった。
+    // ここでもヒーローズームは止めない（他の reveal 系は CSS 側で軽減）。
+    const canAnimate = typeof Element.prototype.animate === 'function';
 
-    // 旧 Swiper: delay 6s / fade 3s よりゆっくり。ズームは表示時間より長く一方向のみ（戻りを見せない）
+    // 切替はゆっくり。ズームは全スライド同時・同相（切替で scale(1) に戻さない＝戻りが見えない）
     const SLIDE_MS = 10000;
-    const FADE_MS = 4500;
-    const ZOOM_MS = 28000;
+    const ZOOM_MS = 60000;
     const ZOOM_TO = 1.2;
 
     const startZoom = (slide) => {
@@ -139,41 +136,23 @@
       if (heroOffscreen) anim.pause();
     };
 
-    const releaseZoomAfterFade = (slide) => {
-      window.setTimeout(() => {
-        if (slide.classList.contains('is-active')) return;
-        const anim = heroZoomBySlide.get(slide);
-        if (anim) {
-          anim.cancel();
-          heroZoomBySlide.delete(slide);
-        }
-        const img = slide.querySelector('img');
-        if (img) img.style.transform = '';
-      }, FADE_MS + 80);
+    const bootZoom = () => {
+      slides.forEach((slide) => startZoom(slide));
     };
 
-    if (slides[0]) {
-      const firstImg = slides[0].querySelector('img');
-      if (firstImg && !firstImg.complete) {
-        firstImg.addEventListener('load', () => startZoom(slides[0]), {
-          once: true
-        });
-      } else {
-        startZoom(slides[0]);
-      }
+    const firstImg = slides[0]?.querySelector('img');
+    if (firstImg && !firstImg.complete) {
+      firstImg.addEventListener('load', bootZoom, { once: true });
+    } else {
+      bootZoom();
     }
 
     if (slides.length > 1) {
       let index = 0;
       setInterval(() => {
-        const prev = slides[index];
-        prev.classList.remove('is-active');
-        // フェードアウト中は拡大したまま → 消えてからリセット（戻りを描画しない）
-        releaseZoomAfterFade(prev);
+        slides[index].classList.remove('is-active');
         index = (index + 1) % slides.length;
-        const next = slides[index];
-        next.classList.add('is-active');
-        startZoom(next);
+        slides[index].classList.add('is-active');
       }, SLIDE_MS);
     }
   }

@@ -3509,7 +3509,7 @@ table td {
   max-width: 100%;
 }
 
-/* ===== hero ken burns は site.js の Web Animations API で制御（全スライド常時・切替が滑らか） ===== */
+/* ===== hero ken burns は site.js の Web Animations API（全スライド同相ズーム） ===== */
 .background {
   overflow: hidden;
 }
