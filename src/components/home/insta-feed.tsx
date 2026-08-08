@@ -1,4 +1,4 @@
-const INSTAGRAM_PROFILE = 'https://www.instagram.com/raoc.0601/';
+const INSTAGRAM_PROFILE = 'https://www.instagram.com/raoc.0105/';
 
 type InstaFeedProps = {
   /** Graph API 取得件数（トップは2、一覧は多め） */
@@ -19,6 +19,7 @@ export function InstaFeed({
       data-insta-feed
       data-limit={String(limit)}
       data-profile-url={INSTAGRAM_PROFILE}
+      data-profile-handle="raoc.0105"
     >
       <div class="loadingElement" data-insta-loading>
         <div class="loader" aria-label="読み込み中" />
