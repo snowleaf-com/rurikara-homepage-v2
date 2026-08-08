@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import {
   isAllowedOrigin,
+  normalizeMailAddress,
   sendContactMails,
   validateContactPayload
 } from '../../lib/mail';
@@ -37,8 +38,10 @@ mail.post('/', async (c) => {
   }
 
   const apiKey = c.env.RESEND_API_KEY;
-  const mailFrom = c.env.MAIL_FROM;
-  const mailTo = c.env.MAIL_TO;
+  const mailFrom = c.env.MAIL_FROM
+    ? normalizeMailAddress(c.env.MAIL_FROM)
+    : '';
+  const mailTo = c.env.MAIL_TO ? normalizeMailAddress(c.env.MAIL_TO) : '';
 
   if (!apiKey || !mailFrom || !mailTo) {
     console.error('Missing mail env: RESEND_API_KEY / MAIL_FROM / MAIL_TO');
@@ -46,7 +49,7 @@ mail.post('/', async (c) => {
       {
         status: 'sendError',
         error:
-          'メール設定が不足しています。.dev.vars の RESEND_API_KEY / MAIL_FROM / MAIL_TO を確認してください。'
+          'メール設定が不足しています。Workers secrets の RESEND_API_KEY / MAIL_FROM / MAIL_TO を確認してください。'
       },
       500
     );
