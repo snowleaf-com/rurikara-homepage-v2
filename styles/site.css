@@ -620,6 +620,7 @@ table td {
     align-items: center;
     top: auto;
     bottom: 0;
+    bottom: env(safe-area-inset-bottom, 0px);
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
@@ -627,6 +628,7 @@ table td {
     -webkit-border-radius: 0px;
     -moz-border-radius: 0px;
     padding-right: 60px;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
   .mobileImg.visible {
@@ -667,6 +669,7 @@ table td {
 .toTop {
   position: fixed;
   bottom: 0px;
+  bottom: env(safe-area-inset-bottom, 0px);
   right: 0px;
   z-index: 800;
   visibility: hidden;
@@ -937,6 +940,7 @@ table td {
   left: 0;
   width: 100%;
   height: 100vh;
+  height: 100dvh;
   z-index: -1;
   margin: 0;
   padding: 0;
@@ -962,6 +966,7 @@ table td {
 .slide img {
   width: 100vw; /* ビューポートの幅 */
   height: 100vh; /* ビューポートの高さ */
+  height: 100dvh;
   object-fit: cover;
 }
 
@@ -969,6 +974,7 @@ table td {
 /* components/IndexTop.module.css */
 .indexTop {
   min-height: 100vh;
+  min-height: 100dvh;
   height: 100%;
   width: 100%;
   position: relative;
@@ -1136,7 +1142,8 @@ table td {
   }
   .scrolldown {
     position: absolute;
-    bottom: 10%;
+    /* スマホブラウザ下部UIに隠れないよう、見た目の下端から余白を確保 */
+    bottom: calc(28px + env(safe-area-inset-bottom, 0px));
     left: 50%;
   }
 }

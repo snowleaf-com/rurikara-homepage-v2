@@ -52,7 +52,10 @@ export function Layout({
       <html lang="ja">
         <head>
           <meta charset="utf-8" />
-          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, viewport-fit=cover"
+          />
           <title>{title}</title>
           <meta name="description" content={description} />
           <meta name="keywords" content={DEFAULT_KEYWORDS} />
