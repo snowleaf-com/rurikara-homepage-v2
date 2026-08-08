@@ -3349,7 +3349,12 @@ table td {
 .btn .arrow {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   margin-right: 0.35em;
+  padding-right: 0;
+  line-height: 1;
+  /* › はフォントメトリクスで下に落ちやすいので少し上げる */
+  transform: translateY(-0.12em);
 }
 
 /* ===== perf animations / youtube lite ===== */
