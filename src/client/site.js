@@ -96,21 +96,12 @@
   const swiper = document.getElementById('hero-swiper');
   if (swiper) {
     const slides = Array.from(swiper.querySelectorAll('[data-slide]'));
-    const restartKenBurns = (slide) => {
-      const img = slide.querySelector('img');
-      if (!img) return;
-      img.style.animation = 'none';
-      void img.offsetWidth;
-      img.style.animation = '';
-    };
-    if (slides[0]) restartKenBurns(slides[0]);
     if (slides.length > 1) {
       let index = 0;
       setInterval(() => {
         slides[index].classList.remove('is-active');
         index = (index + 1) % slides.length;
         slides[index].classList.add('is-active');
-        restartKenBurns(slides[index]);
       }, 6000);
     }
   }
