@@ -1,31 +1,50 @@
-import { html } from 'hono/html';
+import { html, raw } from 'hono/html';
 import type { Child } from 'hono/jsx';
 import { CRITICAL_CSS } from '../critical-css';
+import {
+  absoluteUrl,
+  buildLocalBusinessJsonLd,
+  DEFAULT_DESCRIPTION,
+  DEFAULT_KEYWORDS,
+  DEFAULT_TITLE,
+  escapeJsonForHtml,
+  OG_IMAGE_PATH,
+  SITE_NAME
+} from '../lib/seo';
 import { Footer } from './footer';
 import { Header } from './header';
 
 type LayoutProps = {
   title?: string;
   description?: string;
+  /** 正規URL用のパス（例: /about）。省略時はトップ扱い */
+  path?: string;
   children: Child;
   scripts?: string[];
   preloadImage?: string;
   hideFooter?: boolean;
+  /** true のとき noindex,nofollow */
+  noindex?: boolean;
+  /** 追加の JSON-LD（BreadcrumbList など） */
+  jsonLd?: unknown[];
 };
-
-const DEFAULT_TITLE = 'るりから鍼灸・接骨院｜沼津市井出の鍼灸接骨院';
-const DEFAULT_DESCRIPTION =
-  '静岡県沼津市井出にある、るりから鍼灸・接骨院です。幅広い施術を通じて痛みを改善し、あなたの健康をサポートします。';
 
 export function Layout({
   title = DEFAULT_TITLE,
   description = DEFAULT_DESCRIPTION,
+  path = '/',
   children,
   scripts = [],
   preloadImage,
-  hideFooter = false
+  hideFooter = false,
+  noindex = false,
+  jsonLd = []
 }: LayoutProps) {
   const pageScripts = ['/js/site.js', ...scripts];
+  const canonical = absoluteUrl(path);
+  const ogImage = absoluteUrl(OG_IMAGE_PATH);
+  const robots = noindex ? 'noindex, nofollow' : 'index, follow';
+  const structuredData = [buildLocalBusinessJsonLd(), ...jsonLd];
 
   return (
     <>
@@ -36,18 +55,23 @@ export function Layout({
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <title>{title}</title>
           <meta name="description" content={description} />
-          <meta
-            name="keywords"
-            content="沼津市, 接骨院, 鍼灸院, 静岡県, 骨折, 脱臼, ねんざ, 捻挫, 肩こり, 腰痛, 膝痛, 鍼灸治療"
-          />
+          <meta name="keywords" content={DEFAULT_KEYWORDS} />
+          <meta name="robots" content={robots} />
+          <link rel="canonical" href={canonical} />
+
           <meta property="og:title" content={title} />
           <meta property="og:description" content={description} />
           <meta property="og:type" content="website" />
-          <meta property="og:url" content="https://ruri-kara.com/" />
-          <meta
-            property="og:image"
-            content="https://ruri-kara.com/img/yuai_ogp.jpg"
-          />
+          <meta property="og:url" content={canonical} />
+          <meta property="og:image" content={ogImage} />
+          <meta property="og:locale" content="ja_JP" />
+          <meta property="og:site_name" content={SITE_NAME} />
+
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta name="twitter:title" content={title} />
+          <meta name="twitter:description" content={description} />
+          <meta name="twitter:image" content={ogImage} />
+
           <link rel="icon" href="/img/favicon.ico" sizes="any" />
           <link rel="icon" href="/img/icon.svg" type="image/svg+xml" />
           <link rel="apple-touch-icon" href="/img/apple-touch-icon.png" />
@@ -89,6 +113,11 @@ export function Layout({
               href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700&display=swap"
             />
           </noscript>
+          {structuredData.map((data) =>
+            html`<script type="application/ld+json">${raw(
+              escapeJsonForHtml(data)
+            )}</script>`
+          )}
         </head>
         <body>
           <Header />
