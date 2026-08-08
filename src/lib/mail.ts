@@ -30,6 +30,18 @@ export function isAllowedOrigin(origin: string | undefined, referer: string | un
   );
 }
 
+/** wrangler secret / .dev.vars で付いた余分なクォートを除去 */
+export function normalizeMailAddress(value: string) {
+  let v = value.trim();
+  if (
+    (v.startsWith('"') && v.endsWith('"')) ||
+    (v.startsWith("'") && v.endsWith("'"))
+  ) {
+    v = v.slice(1, -1).trim();
+  }
+  return v;
+}
+
 export function validateContactPayload(input: unknown): {
   ok: true;
   data: ContactPayload;
