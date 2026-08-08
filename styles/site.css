@@ -3176,8 +3176,8 @@ table td {
   inset: 0;
   opacity: 0;
   z-index: 0;
-  /* 旧 Swiper EffectFade speed: 3000 */
-  transition: opacity 3s ease;
+  /* クロスフェードをゆっくり（切替の体感を穏やかに） */
+  transition: opacity 4.5s ease;
 }
 .background .slide.is-active {
   opacity: 1;

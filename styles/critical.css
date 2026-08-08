@@ -32,7 +32,7 @@ img{vertical-align:top;max-width:100%;height:auto}
 .toTop{position:fixed;bottom:0;bottom:env(safe-area-inset-bottom,0px);right:0;z-index:800;visibility:hidden}
 .background{position:fixed;inset:0;width:100%;height:100vh;height:100dvh;z-index:-1;overflow:hidden;background:#d9e2e5}
 .background .swiper,.background .slide{width:100%;height:100%}
-.background .slide{position:absolute;inset:0;opacity:0;z-index:0;overflow:hidden;transition:opacity 3s ease}
+.background .slide{position:absolute;inset:0;opacity:0;z-index:0;overflow:hidden;transition:opacity 4.5s ease}
 .background .slide.is-active{opacity:1;z-index:1}
 .background.heroScrolled{visibility:hidden}
 .background .slide img{width:100vw;height:100vh;height:100dvh;object-fit:cover;transform-origin:center center;will-change:transform}

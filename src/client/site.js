@@ -11,11 +11,13 @@
 
   const heroSlides = document.getElementById('hero-slides');
   const indexTop = document.getElementById('top');
-  /** @type {Animation[]} */
-  const heroKenBurns = [];
+  /** @type {Map<Element, Animation>} */
+  const heroZoomBySlide = new Map();
+  let heroOffscreen = false;
 
-  const setHeroKenBurnsPaused = (paused) => {
-    for (const anim of heroKenBurns) {
+  const setHeroZoomPaused = (paused) => {
+    heroOffscreen = paused;
+    for (const anim of heroZoomBySlide.values()) {
       if (paused) anim.pause();
       else anim.play();
     }
@@ -55,7 +57,7 @@
     if (heroSlides && indexTop) {
       const pastHero = scrollY >= indexTop.offsetHeight - 8;
       heroSlides.classList.toggle('heroScrolled', pastHero);
-      setHeroKenBurnsPaused(pastHero);
+      setHeroZoomPaused(pastHero);
     }
   };
 
@@ -109,33 +111,70 @@
     const reduceMotion = window.matchMedia(
       '(prefers-reduced-motion: reduce)'
     ).matches;
+    const canAnimate =
+      !reduceMotion && typeof Element.prototype.animate === 'function';
 
-    // 全スライドを常時ズーム（位相だけずらす）→ 切替時も滑らか。CSS animation より Chrome モバイルで安定
-    if (!reduceMotion && typeof Element.prototype.animate === 'function') {
-      slides.forEach((slide, i) => {
+    // 旧 Swiper: delay 6s / fade 3s よりゆっくり。ズームは表示時間より長く一方向のみ（戻りを見せない）
+    const SLIDE_MS = 10000;
+    const FADE_MS = 4500;
+    const ZOOM_MS = 28000;
+    const ZOOM_TO = 1.2;
+
+    const startZoom = (slide) => {
+      if (!canAnimate) return;
+      const img = slide.querySelector('img');
+      if (!img) return;
+      const prev = heroZoomBySlide.get(slide);
+      if (prev) prev.cancel();
+      const anim = img.animate(
+        [{ transform: 'scale(1)' }, { transform: `scale(${ZOOM_TO})` }],
+        {
+          duration: ZOOM_MS,
+          easing: 'linear',
+          fill: 'forwards',
+          iterations: 1
+        }
+      );
+      heroZoomBySlide.set(slide, anim);
+      if (heroOffscreen) anim.pause();
+    };
+
+    const releaseZoomAfterFade = (slide) => {
+      window.setTimeout(() => {
+        if (slide.classList.contains('is-active')) return;
+        const anim = heroZoomBySlide.get(slide);
+        if (anim) {
+          anim.cancel();
+          heroZoomBySlide.delete(slide);
+        }
         const img = slide.querySelector('img');
-        if (!img) return;
-        const anim = img.animate(
-          [{ transform: 'scale(1)' }, { transform: 'scale(1.2)' }],
-          {
-            duration: 20000,
-            iterations: Infinity,
-            easing: 'linear',
-            // 6.5s / 20s ずつ位相をずらす
-            iterationStart: (i * 0.325) % 1
-          }
-        );
-        heroKenBurns.push(anim);
-      });
+        if (img) img.style.transform = '';
+      }, FADE_MS + 80);
+    };
+
+    if (slides[0]) {
+      const firstImg = slides[0].querySelector('img');
+      if (firstImg && !firstImg.complete) {
+        firstImg.addEventListener('load', () => startZoom(slides[0]), {
+          once: true
+        });
+      } else {
+        startZoom(slides[0]);
+      }
     }
 
     if (slides.length > 1) {
       let index = 0;
       setInterval(() => {
-        slides[index].classList.remove('is-active');
+        const prev = slides[index];
+        prev.classList.remove('is-active');
+        // フェードアウト中は拡大したまま → 消えてからリセット（戻りを描画しない）
+        releaseZoomAfterFade(prev);
         index = (index + 1) % slides.length;
-        slides[index].classList.add('is-active');
-      }, 6000);
+        const next = slides[index];
+        next.classList.add('is-active');
+        startZoom(next);
+      }, SLIDE_MS);
     }
   }
 
