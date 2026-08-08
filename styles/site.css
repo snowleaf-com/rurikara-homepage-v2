@@ -3511,8 +3511,7 @@ table td {
   max-width: 100%;
 }
 
-/* ===== hero ken burns（旧 framer-motion: scale 1→1.2 / 20s） ===== */
-/* 全スライドで常時ズームし、切り替え時も動きを止めない（クロスフェードのみ） */
+/* ===== hero ken burns（LCP後に .heroKenBurns を付与して開始） ===== */
 .background {
   overflow: hidden;
 }
@@ -3521,13 +3520,15 @@ table td {
 }
 .background .slide img {
   transform-origin: center center;
+}
+.background.heroKenBurns .slide img {
   will-change: transform;
   animation: kenBurns 20s linear infinite;
 }
-.background .slide:nth-child(2) img {
+.background.heroKenBurns .slide:nth-child(2) img {
   animation-delay: -6.5s;
 }
-.background .slide:nth-child(3) img {
+.background.heroKenBurns .slide:nth-child(3) img {
   animation-delay: -13s;
 }
 @keyframes kenBurns {
@@ -3539,8 +3540,9 @@ table td {
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .background .slide img {
+  .background.heroKenBurns .slide img {
     animation: none;
+    will-change: auto;
   }
 }
 

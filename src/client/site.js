@@ -83,15 +83,79 @@
 
   const swiper = document.getElementById('hero-swiper');
   if (swiper) {
-    const slides = Array.from(swiper.querySelectorAll('[data-slide]'));
+    const DEFERRED_SLIDES = [
+      {
+        sources: [
+          { srcset: '/img/slide2-800.webp', w: 800 },
+          { srcset: '/img/slide2-1280.webp', w: 1280 },
+          { srcset: '/img/slide2.webp', w: 1920 }
+        ],
+        jpg: '/img/slide2.jpg',
+        w: 1920,
+        h: 1341
+      },
+      {
+        sources: [
+          { srcset: '/img/slide3-800.webp', w: 800 },
+          { srcset: '/img/slide3-1280.webp', w: 1280 },
+          { srcset: '/img/slide3.webp', w: 1920 }
+        ],
+        jpg: '/img/slide3.jpg',
+        w: 1920,
+        h: 1075
+      }
+    ];
 
-    if (slides.length > 1) {
+    const makeSlide = (meta) => {
+      const slide = document.createElement('div');
+      slide.className = 'slide';
+      slide.setAttribute('data-slide', '');
+      const picture = document.createElement('picture');
+      const source = document.createElement('source');
+      source.type = 'image/webp';
+      source.srcset = meta.sources.map((s) => `${s.srcset} ${s.w}w`).join(', ');
+      source.sizes = '100vw';
+      const img = document.createElement('img');
+      img.src = meta.jpg;
+      img.alt = '';
+      img.width = meta.w;
+      img.height = meta.h;
+      img.decoding = 'async';
+      img.loading = 'lazy';
+      img.fetchPriority = 'low';
+      picture.append(source, img);
+      slide.append(picture);
+      return slide;
+    };
+
+    const startHero = () => {
+      for (const meta of DEFERRED_SLIDES) {
+        swiper.append(makeSlide(meta));
+      }
+      const root = document.getElementById('hero-slides');
+      root?.classList.add('heroKenBurns');
+      const slides = Array.from(swiper.querySelectorAll('[data-slide]'));
+      if (slides.length < 2) return;
       let index = 0;
       setInterval(() => {
         slides[index].classList.remove('is-active');
         index = (index + 1) % slides.length;
         slides[index].classList.add('is-active');
       }, 6000);
+    };
+
+    const scheduleHero = () => {
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(startHero, { timeout: 2500 });
+      } else {
+        setTimeout(startHero, 1200);
+      }
+    };
+
+    if (document.readyState === 'complete') {
+      scheduleHero();
+    } else {
+      window.addEventListener('load', scheduleHero, { once: true });
     }
   }
 

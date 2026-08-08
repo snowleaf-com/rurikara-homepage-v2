@@ -1,35 +1,14 @@
-const SLIDE_META = [
-  {
-    sources: [
-      { srcset: '/img/slide1-800.webp', w: 800 },
-      { srcset: '/img/slide1-1280.webp', w: 1280 },
-      { srcset: '/img/slide1.webp', w: 1920 }
-    ],
-    jpg: '/img/slide1.jpg',
-    w: 1920,
-    h: 1280
-  },
-  {
-    sources: [
-      { srcset: '/img/slide2-800.webp', w: 800 },
-      { srcset: '/img/slide2-1280.webp', w: 1280 },
-      { srcset: '/img/slide2.webp', w: 1920 }
-    ],
-    jpg: '/img/slide2.jpg',
-    w: 1920,
-    h: 1341
-  },
-  {
-    sources: [
-      { srcset: '/img/slide3-800.webp', w: 800 },
-      { srcset: '/img/slide3-1280.webp', w: 1280 },
-      { srcset: '/img/slide3.webp', w: 1920 }
-    ],
-    jpg: '/img/slide3.jpg',
-    w: 1920,
-    h: 1075
-  }
-] as const;
+/** 初期HTMLは1枚のみ。2枚目以降は site.js が idle 後に差し込む */
+const FIRST_SLIDE = {
+  sources: [
+    { srcset: '/img/slide1-800.webp', w: 800 },
+    { srcset: '/img/slide1-1280.webp', w: 1280 },
+    { srcset: '/img/slide1.webp', w: 1920 }
+  ],
+  jpg: '/img/slide1.jpg',
+  w: 1920,
+  h: 1280
+} as const;
 
 function slideSrcSet(sources: readonly { srcset: string; w: number }[]) {
   return sources.map((s) => `${s.srcset} ${s.w}w`).join(', ');
@@ -40,33 +19,26 @@ export function Hero() {
     <>
       <div class="background" id="hero-slides" aria-hidden="true">
         <div class="swiper" id="hero-swiper">
-          {SLIDE_META.map((slide, index) => (
-            <div
-              class={index === 0 ? 'slide is-active' : 'slide'}
-              data-slide
-              key={slide.jpg}
-            >
-              <picture>
-                <source
-                  type="image/webp"
-                  srcset={slideSrcSet(slide.sources)}
-                  sizes="100vw"
-                />
-                <img
-                  src={slide.jpg}
-                  alt=""
-                  width={slide.w}
-                  height={slide.h}
-                  decoding="async"
-                  fetchpriority={index === 0 ? 'high' : 'low'}
-                  loading={index === 0 ? undefined : 'lazy'}
-                />
-              </picture>
-            </div>
-          ))}
+          <div class="slide is-active" data-slide>
+            <picture>
+              <source
+                type="image/webp"
+                srcset={slideSrcSet(FIRST_SLIDE.sources)}
+                sizes="100vw"
+              />
+              <img
+                src={FIRST_SLIDE.jpg}
+                alt=""
+                width={FIRST_SLIDE.w}
+                height={FIRST_SLIDE.h}
+                decoding="async"
+                fetchpriority="high"
+              />
+            </picture>
+          </div>
         </div>
       </div>
-      <div class="indexTop animFadeIn" id="top">
+      <div class="indexTop" id="top">
         <div class="topCatch">
           <h2 class="heading">
             幅広い施術で

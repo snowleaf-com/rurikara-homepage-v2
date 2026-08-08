@@ -45,6 +45,8 @@ export function Layout({
   const ogImage = absoluteUrl(OG_IMAGE_PATH);
   const robots = noindex ? 'noindex, nofollow' : 'index, follow';
   const structuredData = [buildLocalBusinessJsonLd(), ...jsonLd];
+  /** トップのみ CSS 非同期（下位ページは .cardImg FOUC 回避のため同期） */
+  const deferStylesheet = Boolean(preloadImage);
 
   return (
     <>
@@ -98,11 +100,21 @@ export function Layout({
             : null}
           <link rel="preload" as="image" href="/img/top_logo.svg" />
           {html`<style>${CRITICAL_CSS}</style>`}
-          {/*
-            styles.css を非同期(media=print→all)にすると、critical に無い
-            .cardImg 等が後から当たり「大きい→通常」のFOUCが起きるため同期読込にする
-          */}
-          <link rel="stylesheet" href="/styles.css" />
+          {deferStylesheet ? (
+            <>
+              {html`<link
+                rel="stylesheet"
+                href="/styles.css"
+                media="print"
+                onload="this.media='all'"
+              />`}
+              <noscript>
+                <link rel="stylesheet" href="/styles.css" />
+              </noscript>
+            </>
+          ) : (
+            <link rel="stylesheet" href="/styles.css" />
+          )}
           {/* 日本語は unicode-range 分割のため Google Fonts のまま（自前フルは数MB） */}
           {html`<link
             rel="stylesheet"

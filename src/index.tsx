@@ -82,7 +82,7 @@ app.get('/', (c) => {
       path="/"
       title={`るりから鍼灸・接骨院｜沼津市井出の鍼灸接骨院`}
       description={DEFAULT_DESCRIPTION}
-      preloadImage="/img/slide1.webp"
+      preloadImage="/img/slide1-800.webp"
     >
       <HomePage />
     </Layout>
