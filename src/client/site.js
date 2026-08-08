@@ -11,6 +11,15 @@
 
   const heroSlides = document.getElementById('hero-slides');
   const indexTop = document.getElementById('top');
+  /** @type {Animation[]} */
+  const heroKenBurns = [];
+
+  const setHeroKenBurnsPaused = (paused) => {
+    for (const anim of heroKenBurns) {
+      if (paused) anim.pause();
+      else anim.play();
+    }
+  };
 
   const onScroll = () => {
     const scrollY = window.scrollY;
@@ -46,6 +55,7 @@
     if (heroSlides && indexTop) {
       const pastHero = scrollY >= indexTop.offsetHeight - 8;
       heroSlides.classList.toggle('heroScrolled', pastHero);
+      setHeroKenBurnsPaused(pastHero);
     }
   };
 
@@ -96,6 +106,29 @@
   const swiper = document.getElementById('hero-swiper');
   if (swiper) {
     const slides = Array.from(swiper.querySelectorAll('[data-slide]'));
+    const reduceMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    ).matches;
+
+    // 全スライドを常時ズーム（位相だけずらす）→ 切替時も滑らか。CSS animation より Chrome モバイルで安定
+    if (!reduceMotion && typeof Element.prototype.animate === 'function') {
+      slides.forEach((slide, i) => {
+        const img = slide.querySelector('img');
+        if (!img) return;
+        const anim = img.animate(
+          [{ transform: 'scale(1)' }, { transform: 'scale(1.2)' }],
+          {
+            duration: 20000,
+            iterations: Infinity,
+            easing: 'linear',
+            // 6.5s / 20s ずつ位相をずらす
+            iterationStart: (i * 0.325) % 1
+          }
+        );
+        heroKenBurns.push(anim);
+      });
+    }
+
     if (slides.length > 1) {
       let index = 0;
       setInterval(() => {

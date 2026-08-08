@@ -3176,18 +3176,12 @@ table td {
   inset: 0;
   opacity: 0;
   z-index: 0;
-  transform-origin: center center;
   /* 旧 Swiper EffectFade speed: 3000 */
   transition: opacity 3s ease;
 }
 .background .slide.is-active {
   opacity: 1;
   z-index: 1;
-  /* img ではなく slide 自体をズーム（Chrome で確実に効かせる） */
-  animation: kenBurns 20s linear infinite;
-}
-.background.heroScrolled .slide.is-active {
-  animation-play-state: paused;
 }
 .youtubeBannerLink.youtubeBannerBlock {
   flex: 0 0 48%;
@@ -3387,8 +3381,7 @@ table td {
 @media (prefers-reduced-motion: reduce) {
   .animFadeIn,
   .animZoomIn,
-  .hero-slides__item img,
-  .background .slide.is-active {
+  .hero-slides__item img {
     animation: none !important;
   }
 }
@@ -3516,7 +3509,7 @@ table td {
   max-width: 100%;
 }
 
-/* ===== hero ken burns（.slide.is-active 側で定義。keyframes のみここ） ===== */
+/* ===== hero ken burns は site.js の Web Animations API で制御（全スライド常時・切替が滑らか） ===== */
 .background {
   overflow: hidden;
 }
@@ -3527,22 +3520,11 @@ table td {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transform-origin: center center;
+  will-change: transform;
 }
 .background.heroScrolled {
   visibility: hidden;
-}
-@keyframes kenBurns {
-  from {
-    transform: scale(1);
-  }
-  to {
-    transform: scale(1.2);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .background .slide.is-active {
-    animation: none !important;
-  }
 }
 
 
