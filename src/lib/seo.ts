@@ -86,7 +86,7 @@ export function buildLocalBusinessJsonLd() {
       }
     ],
     sameAs: [
-      'https://www.instagram.com/raoc.0601/',
+      'https://www.instagram.com/raoc.0105/',
       'https://www.youtube.com/@%E3%82%8B%E3%82%8A%E3%81%8B%E3%82%89%E3%83%81%E3%83%A3%E3%83%B3%E3%83%8D%E3%83%AB'
     ]
   };

@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "npm run build:assets && wrangler dev",
+    "dev": "npm run build:assets && wrangler dev --ip 0.0.0.0 --port 8787",
     "build:css": "node scripts/minify-css.mjs",
     "build:assets": "node scripts/minify-css.mjs",
     "build": "npm run build:assets",

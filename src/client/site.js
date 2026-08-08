@@ -9,23 +9,72 @@
 
   let menuOpen = false;
 
+  const heroSlides = document.getElementById('hero-slides');
+  const indexTop = document.getElementById('top');
+  const heroZoom = document.getElementById('hero-zoom');
+  // rAF で親をズーム（全スライド共通）。旧 Framer: 1→1.2 / 20s / linear
+  const ZOOM_MS = 20000;
+  const ZOOM_TO = 1.2;
+  let heroZoomRaf = 0;
+  let heroZoomElapsed = 0;
+  let heroZoomLastTs = 0;
+  let heroZoomRunning = false;
+
+  const applyHeroZoom = (elapsed) => {
+    if (!heroZoom) return;
+    const t = Math.min(1, elapsed / ZOOM_MS);
+    const scale = 1 + (ZOOM_TO - 1) * t;
+    heroZoom.style.transform = `scale(${scale})`;
+  };
+
+  const heroZoomFrame = (ts) => {
+    if (!heroZoomRunning) return;
+    if (heroZoomLastTs) heroZoomElapsed += ts - heroZoomLastTs;
+    heroZoomLastTs = ts;
+    applyHeroZoom(heroZoomElapsed);
+    if (heroZoomElapsed < ZOOM_MS) {
+      heroZoomRaf = requestAnimationFrame(heroZoomFrame);
+    } else {
+      heroZoomRunning = false;
+      heroZoomLastTs = 0;
+    }
+  };
+
+  const setHeroZoomPaused = (paused) => {
+    if (!heroZoom) return;
+    if (paused) {
+      heroZoomRunning = false;
+      heroZoomLastTs = 0;
+      if (heroZoomRaf) cancelAnimationFrame(heroZoomRaf);
+      heroZoomRaf = 0;
+      return;
+    }
+    if (heroZoomRunning || heroZoomElapsed >= ZOOM_MS) return;
+    heroZoomRunning = true;
+    heroZoomLastTs = 0;
+    heroZoomRaf = requestAnimationFrame(heroZoomFrame);
+  };
+
   const onScroll = () => {
-    const scrolled = window.scrollY > 20;
+    const scrollY = window.scrollY;
+    // ヒーロー(100vh)から少し動いたらすぐ LINE を出す
+    const leftHeroTop = scrollY > 8;
+    const scrolled = scrollY > 20;
     const isMobile = window.matchMedia('(max-width: 959px)').matches;
 
     if (header) header.classList.toggle('headerFixed', scrolled);
 
     if (social) {
       if (isMobile) {
-        social.classList.toggle('isShown', scrolled);
-        social.classList.toggle('snsHidden', !scrolled);
+        social.classList.toggle('isShown', leftHeroTop);
+        social.classList.toggle('snsHidden', !leftHeroTop);
       } else {
         social.classList.remove('isShown', 'snsHidden');
       }
     }
 
     if (lineMobile) {
-      if (isMobile && scrolled) lineMobile.classList.add('visible');
+      if (isMobile && leftHeroTop) lineMobile.classList.add('visible');
       else lineMobile.classList.remove('visible');
     }
 
@@ -35,6 +84,13 @@
     }
 
     if (scrollDown && scrolled) scrollDown.classList.add('scrollHidden');
+
+    // fixed ヒーロー背景は画面外では止めて隠す（背面でズームし続けるのを防ぐ）
+    if (heroSlides && indexTop) {
+      const pastHero = scrollY >= indexTop.offsetHeight - 8;
+      heroSlides.classList.toggle('heroScrolled', pastHero);
+      setHeroZoomPaused(pastHero);
+    }
   };
 
   window.addEventListener('scroll', onScroll, { passive: true });
@@ -83,77 +139,54 @@
 
   const swiper = document.getElementById('hero-swiper');
   if (swiper) {
-    const DEFERRED_SLIDES = [
-      {
-        sources: [
-          { srcset: '/img/slide2-800.webp', w: 800 },
-          { srcset: '/img/slide2-1280.webp', w: 1280 },
-          { srcset: '/img/slide2.webp', w: 1920 }
-        ],
-        jpg: '/img/slide2.jpg',
-        w: 1920,
-        h: 1341
-      },
-      {
-        sources: [
-          { srcset: '/img/slide3-800.webp', w: 800 },
-          { srcset: '/img/slide3-1280.webp', w: 1280 },
-          { srcset: '/img/slide3.webp', w: 1920 }
-        ],
-        jpg: '/img/slide3.jpg',
-        w: 1920,
-        h: 1075
-      }
-    ];
+    const slides = Array.from(swiper.querySelectorAll('[data-slide]'));
+    // 旧 Swiper: autoplay.delay 6000 / speed 3000（waitForTransition）
+    const SLIDE_DELAY_MS = 6000;
+    const FADE_MS = 3000;
 
-    const makeSlide = (meta) => {
-      const slide = document.createElement('div');
-      slide.className = 'slide';
-      slide.setAttribute('data-slide', '');
-      const picture = document.createElement('picture');
-      const source = document.createElement('source');
-      source.type = 'image/webp';
-      source.srcset = meta.sources.map((s) => `${s.srcset} ${s.w}w`).join(', ');
-      source.sizes = '100vw';
-      const img = document.createElement('img');
-      img.src = meta.jpg;
-      img.alt = '';
-      img.width = meta.w;
-      img.height = meta.h;
-      img.decoding = 'async';
-      img.loading = 'lazy';
-      img.fetchPriority = 'low';
-      picture.append(source, img);
-      slide.append(picture);
-      return slide;
+    // ズームは #hero-zoom 一枚だけ（画像ごとの scale 差＝切替時の縮みを根絶）
+    applyHeroZoom(0);
+    setHeroZoomPaused(false);
+
+    // フェードも rAF（iOS「動きを減らす」が CSS transition をほぼ 0 にする対策）
+    slides.forEach((slide, i) => {
+      slide.style.transition = 'none';
+      slide.style.opacity = i === 0 ? '1' : '0';
+    });
+
+    const crossfade = (from, to, done) => {
+      const start = performance.now();
+      to.classList.add('is-active');
+      to.style.zIndex = '2';
+      from.style.zIndex = '1';
+      const step = (now) => {
+        const t = Math.min(1, (now - start) / FADE_MS);
+        const e = t * t * (3 - 2 * t);
+        to.style.opacity = String(e);
+        from.style.opacity = String(1 - e);
+        if (t < 1) {
+          requestAnimationFrame(step);
+          return;
+        }
+        from.classList.remove('is-active');
+        from.style.opacity = '0';
+        from.style.zIndex = '';
+        to.style.zIndex = '';
+        if (done) done();
+      };
+      requestAnimationFrame(step);
     };
 
-    const startHero = () => {
-      for (const meta of DEFERRED_SLIDES) {
-        swiper.append(makeSlide(meta));
-      }
-      const slides = Array.from(swiper.querySelectorAll('[data-slide]'));
-      if (slides.length < 2) return;
+    if (slides.length > 1) {
       let index = 0;
-      setInterval(() => {
-        slides[index].classList.remove('is-active');
-        index = (index + 1) % slides.length;
-        slides[index].classList.add('is-active');
-      }, 6000);
-    };
-
-    const scheduleHero = () => {
-      if ('requestIdleCallback' in window) {
-        requestIdleCallback(startHero, { timeout: 2500 });
-      } else {
-        setTimeout(startHero, 1200);
-      }
-    };
-
-    if (document.readyState === 'complete') {
-      scheduleHero();
-    } else {
-      window.addEventListener('load', scheduleHero, { once: true });
+      const scheduleNext = () => {
+        window.setTimeout(() => {
+          const from = slides[index];
+          index = (index + 1) % slides.length;
+          crossfade(from, slides[index], scheduleNext);
+        }, SLIDE_DELAY_MS);
+      };
+      scheduleNext();
     }
   }
 
@@ -260,7 +293,9 @@
     const more = root.querySelector('[data-insta-more]');
     const profileUrl =
       root.getAttribute('data-profile-url') ||
-      'https://www.instagram.com/raoc.0601/';
+      'https://www.instagram.com/raoc.0105/';
+    const profileHandle =
+      root.getAttribute('data-profile-handle') || 'raoc.0105';
 
     if (loading) {
       loading.hidden = true;
@@ -308,7 +343,7 @@
       results.removeAttribute('hidden');
       results.innerHTML = `<ul class="instaPostWrap">${items}</ul>
         <div class="postedBy">
-          <span class="postedByLabel">@raoc.0601</span>
+          <span class="postedByLabel">@${escapeHtml(profileHandle)}</span>
           <a href="${escapeHtml(profileUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Instagramプロフィール">
             <svg class="instaProfileIcon" viewBox="0 0 448 512" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/></svg>
           </a>

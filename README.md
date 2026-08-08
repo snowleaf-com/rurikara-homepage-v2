@@ -16,6 +16,9 @@ npm run dev
 - Health: http://localhost:8787/api/health
 - メール API: `POST /api/mail`
 
+同じ Wi-Fi のスマホからは、PC の LAN IP で開けます（例: `http://192.168.x.x:8787/`）。
+`npm run dev` は `0.0.0.0:8787` で待受します。
+
 ## メール（Resend）
 
 | 変数 | 用途 |

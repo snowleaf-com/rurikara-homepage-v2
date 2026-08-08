@@ -235,6 +235,9 @@ table td {
   /* タブレット向けのスタイル */
   .header {
     height: 68px;
+    transition:
+      background-color 0.3s ease,
+      height 0.25s ease;
   }
   .headerTxt {
     top: 0px;
@@ -244,6 +247,7 @@ table td {
     text-shadow:/* 縁取りの設定 */ -1px -1px 0 rgba(242, 246, 247, 0.9),
       1px -1px 0 rgba(242, 246, 247, 0.9), -1px 1px 0 rgba(242, 246, 247, 0.9),
       1px 1px 0 rgba(242, 246, 247, 0.9);
+    transition: opacity 0.2s ease, visibility 0.2s ease;
   }
   /* 電話・ハンバーガーを同じ40pxボックスで中央揃え */
   .telBtn,
@@ -263,11 +267,45 @@ table td {
     top: 14px; /* (68 - 40) / 2 */
     border-radius: 3px;
     cursor: pointer;
+    transition:
+      top 0.25s ease,
+      width 0.25s ease,
+      height 0.25s ease,
+      font-size 0.25s ease,
+      right 0.25s ease;
   }
   .telBtn {
-    right: 50px;
+    right: 58px; /* ハンバーガー right:14 + width:40 + 余白 */
     font-size: 26px;
     color: rgba(247, 177, 51, 0.95);
+  }
+
+  /* スクロール後: 「沼津市井出〜」を消し、ヘッダーを低く */
+  .header.headerFixed {
+    height: 52px;
+  }
+  .header.headerFixed .headerTxt {
+    opacity: 0;
+    visibility: hidden;
+  }
+  /* ロゴ・電話はヘッダー高さの中央。ハンバーガーは小さめ＆少し下 */
+  .header.headerFixed .topLogo {
+    top: 8px; /* (52 - 36) / 2 */
+    height: 36px;
+  }
+  .header.headerFixed .telBtn {
+    top: 7px; /* (52 - 38) / 2 */
+    width: 38px;
+    height: 38px;
+    /* ハンバーガー right:18 + width:28 = 46 → さらに離す */
+    right: 60px;
+    font-size: 24px;
+  }
+  .header.headerFixed .menu_btn {
+    top: 10px;
+    right: 18px;
+    width: 28px;
+    height: 28px;
   }
 }
 
@@ -426,74 +464,105 @@ table td {
 }
 @media screen and (max-width: 959px) {
   .menu_btn {
-    right: 6px;
+    right: 14px;
   }
   .menu_btn:hover {
     cursor: pointer;
   }
 
+  /*
+   * 線の間隔は top(px)、× は transform。
+   * % 指定だと fixed 配下で基準が崩れて間隔が爆発することがある。
+   * translate と rotate を混ぜると開閉後に広い/狭いの形が戻らない。
+   */
   .menu_btn span {
     width: 28px;
     height: 3px;
     display: block;
     position: absolute;
     left: 50%;
-    top: 50%;
     margin-left: -14px;
-    margin-top: -1.5px;
+    margin-top: 0;
     background-color: rgba(247, 177, 51, 0.8);
-  }
-  .menu_btn span {
-    transition: all 0.3s;
-    transform: rotate(0deg);
-    -webkit-transform: rotate(0deg);
-    -moz-transform: rotate(0deg);
+    border-radius: 999px;
+    opacity: 1;
+    transition:
+      transform 0.3s ease,
+      top 0.3s ease,
+      opacity 0.3s ease,
+      background-color 0.3s ease,
+      box-shadow 0.3s ease;
+    transform: none;
+    -webkit-transform: none;
+    -moz-transform: none;
     box-shadow: /* 縁取りの設定 */ -1px -1px 0 rgba(242, 246, 247, 0.9),
       1px -1px 0 rgba(242, 246, 247, 0.9), -1px 1px 0 rgba(242, 246, 247, 0.9),
       1px 1px 0 rgba(242, 246, 247, 0.9);
   }
+
+  /* 広いヘッダー・40pxボタン（閉じた形）中央 18.5 / 間隔 ±9 */
+  .menu_btn span.top,
+  .menu_btn span.middle,
+  .menu_btn span.bottom {
+    transform: none;
+    -webkit-transform: none;
+    -moz-transform: none;
+  }
   .menu_btn span.top {
-    transform: translateY(-9px);
-    -webkit-transform: translateY(-9px);
-    -moz-transform: translateY(-9px);
+    top: 9.5px;
+  }
+  .menu_btn span.middle {
+    top: 18.5px;
   }
   .menu_btn span.bottom {
-    transform: translateY(9px);
-    -webkit-transform: translateY(9px);
-    -moz-transform: translateY(9px);
+    top: 27.5px;
   }
 
-  .menu_btn:hover span.top {
-    transform: translateY(-11px);
-    -webkit-transform: translateY(-11px);
-    -moz-transform: translateY(-11px);
-  }
-  .menu_btn:hover span.bottom {
-    transform: translateY(11px);
-    -webkit-transform: translateY(11px);
-    -moz-transform: translateY(11px);
+  @media (hover: hover) and (pointer: fine) {
+    .menu_btn:not(.opened):hover span.top {
+      top: 7.5px;
+    }
+    .menu_btn:not(.opened):hover span.bottom {
+      top: 29.5px;
+    }
   }
 
+  /* 開いた形（×）: 全部中央に寄せて回転だけ */
   .menu_btn.opened span {
-    background-color: rgba(247, 177, 51, 0.8);
     box-shadow: none;
+    top: 18.5px;
   }
-
   .menu_btn.opened span.middle {
-    background: rgba(255, 255, 255, 0);
-    transform: translateX(30px);
-    -webkit-transform: translateX(30px);
-    -moz-transform: translateX(30px);
+    opacity: 0;
   }
   .menu_btn.opened span.top {
-    transform: rotate(-45deg) translateY(0px);
-    -webkit-transform: rotate(-45deg) translateY(0px);
-    -moz-transform: rotate(-45deg) translateY(0px);
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(-45deg);
   }
   .menu_btn.opened span.bottom {
-    transform: rotate(45deg) translateY(0px);
-    -webkit-transform: rotate(45deg) translateY(0px);
-    -moz-transform: rotate(45deg) translateY(0px);
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+  }
+
+  /* 狭いヘッダー・28pxボタン（閉じた形）中央 12.75 / 間隔 ±5 */
+  .header.headerFixed .menu_btn span {
+    width: 18px;
+    height: 2.5px;
+    margin-left: -9px;
+  }
+  .header.headerFixed .menu_btn:not(.opened) span.top {
+    top: 7.75px;
+  }
+  .header.headerFixed .menu_btn:not(.opened) span.middle {
+    top: 12.75px;
+  }
+  .header.headerFixed .menu_btn:not(.opened) span.bottom {
+    top: 17.75px;
+  }
+  .header.headerFixed .menu_btn.opened span {
+    top: 12.75px;
   }
 }
 
@@ -632,7 +701,6 @@ table td {
   }
 
   .mobileImg.visible {
-    animation: fadeIn 1s ease forwards;
     display: flex;
   }
   .hSns.mobileImg.visible {
@@ -640,7 +708,6 @@ table td {
   }
   .snsHidden {
     opacity: 0;
-    animation: fadeOut 0.5s ease forwards;
   }
 }
 
@@ -781,6 +848,7 @@ table td {
     top: 20px;
     left: 10px;
     height: 44px;
+    transition: top 0.25s ease, height 0.25s ease;
   }
 }
 @media (max-width: 768px) {
@@ -789,6 +857,44 @@ table td {
     top: 20px;
     left: 10px;
     height: 36px;
+  }
+  .header.headerFixed {
+    height: 48px;
+  }
+  .header.headerFixed .topLogo {
+    top: 8px; /* (48 - 32) / 2 */
+    height: 32px;
+  }
+  .header.headerFixed .telBtn {
+    top: 6px; /* (48 - 36) / 2 */
+    width: 36px;
+    height: 36px;
+    right: 56px;
+    font-size: 22px;
+  }
+  .header.headerFixed .menu_btn {
+    top: 10px;
+    right: 18px;
+    width: 26px;
+    height: 26px;
+  }
+  /* 26pxボタン: 中央 11.75 / 間隔 ±4.5 */
+  .header.headerFixed .menu_btn span {
+    width: 16px;
+    height: 2.5px;
+    margin-left: -8px;
+  }
+  .header.headerFixed .menu_btn:not(.opened) span.top {
+    top: 7.25px;
+  }
+  .header.headerFixed .menu_btn:not(.opened) span.middle {
+    top: 11.75px;
+  }
+  .header.headerFixed .menu_btn:not(.opened) span.bottom {
+    top: 16.25px;
+  }
+  .header.headerFixed .menu_btn.opened span {
+    top: 11.75px;
   }
 }
 
@@ -3178,8 +3284,8 @@ table td {
   inset: 0;
   opacity: 0;
   z-index: 0;
-  /* 旧 Swiper EffectFade speed: 3000 */
-  transition: opacity 3s ease;
+  /* opacity は site.js の rAF クロスフェードで制御 */
+  transition: none;
 }
 .background .slide.is-active {
   opacity: 1;
@@ -3246,10 +3352,11 @@ table td {
     display: none !important;
   }
 
-  /* SP: 下部バーは初期非表示、スクロール後に表示 */
+  /* SP: 下部バーは初期非表示、ヒーローからスクロールしたらすぐ表示 */
   .hSns {
     opacity: 0;
     pointer-events: none;
+    transition: opacity 0.2s ease;
   }
   .hSns.snsHidden {
     opacity: 0;
@@ -3382,8 +3489,7 @@ table td {
 @media (prefers-reduced-motion: reduce) {
   .animFadeIn,
   .animZoomIn,
-  .hero-slides__item img,
-  .background .slide img {
+  .hero-slides__item img {
     animation: none !important;
   }
 }
@@ -3511,37 +3617,33 @@ table td {
   max-width: 100%;
 }
 
-/* ===== hero ken burns（1枚目からすぐ開始。追加スライドは delay で位相をずらす） ===== */
+/* ===== hero ken burns: 親 .hero-zoom を rAF で scale（スライド間で縮み差が出ない） ===== */
 .background {
   overflow: hidden;
+}
+.background .hero-zoom {
+  width: 100%;
+  height: 100%;
+  transform-origin: center center;
+  will-change: transform;
+}
+.background .hero-zoom,
+.background .swiper {
+  width: 100%;
+  height: 100%;
 }
 .background .slide {
   overflow: hidden;
 }
 .background .slide img {
-  transform-origin: center center;
-  will-change: transform;
-  animation: kenBurns 20s linear infinite;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* 個別 transform 禁止（親ズームと競合して切替時に縮んで見える） */
+  transform: none !important;
 }
-.background .slide:nth-child(2) img {
-  animation-delay: -6.5s;
-}
-.background .slide:nth-child(3) img {
-  animation-delay: -13s;
-}
-@keyframes kenBurns {
-  from {
-    transform: scale(1);
-  }
-  to {
-    transform: scale(1.2);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .background .slide img {
-    animation: none;
-    will-change: auto;
-  }
+.background.heroScrolled {
+  visibility: hidden;
 }
 
 
