@@ -34,7 +34,7 @@ img{vertical-align:top;max-width:100%;height:auto}
 .background .swiper,.background .slide{width:100%;height:100%}
 .background .slide{position:absolute;inset:0;opacity:0;z-index:0;overflow:hidden;transition:opacity 3s ease}
 .background .slide.is-active{opacity:1;z-index:1}
-.background .slide img{width:100vw;height:100vh;height:100dvh;object-fit:cover;transform-origin:center center;transform:scale(1)}
+.background .slide img{width:100vw;height:100vh;height:100dvh;object-fit:cover;transform-origin:center center}
 .background .slide.is-active img{will-change:transform;animation:kenBurns 20s linear infinite}
 .background.heroScrolled{visibility:hidden}
 @keyframes kenBurns{from{transform:scale(1)}to{transform:scale(1.2)}}

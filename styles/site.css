@@ -632,7 +632,6 @@ table td {
   }
 
   .mobileImg.visible {
-    animation: fadeIn 1s ease forwards;
     display: flex;
   }
   .hSns.mobileImg.visible {
@@ -640,7 +639,6 @@ table td {
   }
   .snsHidden {
     opacity: 0;
-    animation: fadeOut 0.5s ease forwards;
   }
 }
 
@@ -3246,10 +3244,11 @@ table td {
     display: none !important;
   }
 
-  /* SP: 下部バーは初期非表示、スクロール後に表示 */
+  /* SP: 下部バーは初期非表示、ヒーローからスクロールしたらすぐ表示 */
   .hSns {
     opacity: 0;
     pointer-events: none;
+    transition: opacity 0.2s ease;
   }
   .hSns.snsHidden {
     opacity: 0;
@@ -3520,7 +3519,7 @@ table td {
 }
 .background .slide img {
   transform-origin: center center;
-  transform: scale(1);
+  /* transform を常時指定すると Safari で animation が効かないことがある */
 }
 .background .slide.is-active img {
   will-change: transform;

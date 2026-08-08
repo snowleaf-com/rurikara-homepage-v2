@@ -13,22 +13,25 @@
   const indexTop = document.getElementById('top');
 
   const onScroll = () => {
-    const scrolled = window.scrollY > 20;
+    const scrollY = window.scrollY;
+    // ヒーロー(100vh)から少し動いたらすぐ LINE を出す
+    const leftHeroTop = scrollY > 8;
+    const scrolled = scrollY > 20;
     const isMobile = window.matchMedia('(max-width: 959px)').matches;
 
     if (header) header.classList.toggle('headerFixed', scrolled);
 
     if (social) {
       if (isMobile) {
-        social.classList.toggle('isShown', scrolled);
-        social.classList.toggle('snsHidden', !scrolled);
+        social.classList.toggle('isShown', leftHeroTop);
+        social.classList.toggle('snsHidden', !leftHeroTop);
       } else {
         social.classList.remove('isShown', 'snsHidden');
       }
     }
 
     if (lineMobile) {
-      if (isMobile && scrolled) lineMobile.classList.add('visible');
+      if (isMobile && leftHeroTop) lineMobile.classList.add('visible');
       else lineMobile.classList.remove('visible');
     }
 
@@ -41,7 +44,7 @@
 
     // fixed ヒーロー背景は画面外では止めて隠す（背面でズームし続けるのを防ぐ）
     if (heroSlides && indexTop) {
-      const pastHero = window.scrollY >= indexTop.offsetHeight - 8;
+      const pastHero = scrollY >= indexTop.offsetHeight - 8;
       heroSlides.classList.toggle('heroScrolled', pastHero);
     }
   };
@@ -93,12 +96,21 @@
   const swiper = document.getElementById('hero-swiper');
   if (swiper) {
     const slides = Array.from(swiper.querySelectorAll('[data-slide]'));
+    const restartKenBurns = (slide) => {
+      const img = slide.querySelector('img');
+      if (!img) return;
+      img.style.animation = 'none';
+      void img.offsetWidth;
+      img.style.animation = '';
+    };
+    if (slides[0]) restartKenBurns(slides[0]);
     if (slides.length > 1) {
       let index = 0;
       setInterval(() => {
         slides[index].classList.remove('is-active');
         index = (index + 1) % slides.length;
         slides[index].classList.add('is-active');
+        restartKenBurns(slides[index]);
       }, 6000);
     }
   }
