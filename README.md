@@ -40,11 +40,26 @@ MAIL_FROM="Clinic Name <beth.t@example.com>"
 
 ## デプロイ
 
+### 手動
+
 ```bash
 npm run deploy
 ```
 
-Secrets は Cloudflare Dashboard または `wrangler secret put` で設定してください。
+Workers のアプリ secrets（`RESEND_*` / `MAIL_*` / `INSTAGRAM_*`）は Cloudflare Dashboard または `npx wrangler secret put` で設定してください。
+
+### 自動（main へ push / merge 時）
+
+GitHub Actions（`.github/workflows/deploy.yml`）が `npm run build` → `wrangler deploy` を実行します。
+
+リポジトリ Secrets（Settings → Secrets and variables → Actions）に以下を設定してください。
+
+| Secret | 内容 |
+|--------|------|
+| `CLOUDFLARE_API_TOKEN` | Cloudflare API トークン（Edit Cloudflare Workers テンプレート推奨） |
+| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare Account ID |
+
+トークン作成: [Cloudflare API Tokens](https://dash.cloudflare.com/profile/api-tokens) → Create Token → **Edit Cloudflare Workers**
 
 ## パフォーマンス
 
