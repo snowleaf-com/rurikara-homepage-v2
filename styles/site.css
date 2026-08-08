@@ -3176,8 +3176,8 @@ table td {
   inset: 0;
   opacity: 0;
   z-index: 0;
-  /* クロスフェードをゆっくり（切替の体感を穏やかに） */
-  transition: opacity 4.5s ease;
+  /* opacity は site.js の rAF クロスフェードで制御 */
+  transition: none;
 }
 .background .slide.is-active {
   opacity: 1;
@@ -3509,9 +3509,20 @@ table td {
   max-width: 100%;
 }
 
-/* ===== hero ken burns は site.js の Web Animations API（全スライド同相ズーム） ===== */
+/* ===== hero ken burns: 親 .hero-zoom を rAF で scale（スライド間で縮み差が出ない） ===== */
 .background {
   overflow: hidden;
+}
+.background .hero-zoom {
+  width: 100%;
+  height: 100%;
+  transform-origin: center center;
+  will-change: transform;
+}
+.background .hero-zoom,
+.background .swiper {
+  width: 100%;
+  height: 100%;
 }
 .background .slide {
   overflow: hidden;
@@ -3520,8 +3531,8 @@ table td {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transform-origin: center center;
-  will-change: transform;
+  /* 個別 transform 禁止（親ズームと競合して切替時に縮んで見える） */
+  transform: none !important;
 }
 .background.heroScrolled {
   visibility: hidden;

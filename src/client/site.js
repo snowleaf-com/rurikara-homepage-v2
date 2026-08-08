@@ -11,16 +11,48 @@
 
   const heroSlides = document.getElementById('hero-slides');
   const indexTop = document.getElementById('top');
-  /** @type {Map<Element, Animation>} */
-  const heroZoomBySlide = new Map();
-  let heroOffscreen = false;
+  const heroZoom = document.getElementById('hero-zoom');
+  // rAF で親をズーム（全スライド共通）。WAAPI/CSS は iOS「動きを減らす」で止まることがある
+  const ZOOM_MS = 60000;
+  const ZOOM_TO = 1.2;
+  let heroZoomRaf = 0;
+  let heroZoomElapsed = 0;
+  let heroZoomLastTs = 0;
+  let heroZoomRunning = false;
+
+  const applyHeroZoom = (elapsed) => {
+    if (!heroZoom) return;
+    const t = Math.min(1, elapsed / ZOOM_MS);
+    const scale = 1 + (ZOOM_TO - 1) * t;
+    heroZoom.style.transform = `scale(${scale})`;
+  };
+
+  const heroZoomFrame = (ts) => {
+    if (!heroZoomRunning) return;
+    if (heroZoomLastTs) heroZoomElapsed += ts - heroZoomLastTs;
+    heroZoomLastTs = ts;
+    applyHeroZoom(heroZoomElapsed);
+    if (heroZoomElapsed < ZOOM_MS) {
+      heroZoomRaf = requestAnimationFrame(heroZoomFrame);
+    } else {
+      heroZoomRunning = false;
+      heroZoomLastTs = 0;
+    }
+  };
 
   const setHeroZoomPaused = (paused) => {
-    heroOffscreen = paused;
-    for (const anim of heroZoomBySlide.values()) {
-      if (paused) anim.pause();
-      else anim.play();
+    if (!heroZoom) return;
+    if (paused) {
+      heroZoomRunning = false;
+      heroZoomLastTs = 0;
+      if (heroZoomRaf) cancelAnimationFrame(heroZoomRaf);
+      heroZoomRaf = 0;
+      return;
     }
+    if (heroZoomRunning || heroZoomElapsed >= ZOOM_MS) return;
+    heroZoomRunning = true;
+    heroZoomLastTs = 0;
+    heroZoomRaf = requestAnimationFrame(heroZoomFrame);
   };
 
   const onScroll = () => {
@@ -108,51 +140,47 @@
   const swiper = document.getElementById('hero-swiper');
   if (swiper) {
     const slides = Array.from(swiper.querySelectorAll('[data-slide]'));
-    // 旧サイトの Ken Burns は CSS で動いており prefers-reduced-motion を見ていなかった。
-    // ここでもヒーローズームは止めない（他の reveal 系は CSS 側で軽減）。
-    const canAnimate = typeof Element.prototype.animate === 'function';
-
-    // 切替はゆっくり。ズームは全スライド同時・同相（切替で scale(1) に戻さない＝戻りが見えない）
     const SLIDE_MS = 10000;
-    const ZOOM_MS = 60000;
-    const ZOOM_TO = 1.2;
+    const FADE_MS = 4500;
 
-    const startZoom = (slide) => {
-      if (!canAnimate) return;
-      const img = slide.querySelector('img');
-      if (!img) return;
-      const prev = heroZoomBySlide.get(slide);
-      if (prev) prev.cancel();
-      const anim = img.animate(
-        [{ transform: 'scale(1)' }, { transform: `scale(${ZOOM_TO})` }],
-        {
-          duration: ZOOM_MS,
-          easing: 'linear',
-          fill: 'forwards',
-          iterations: 1
+    // ズームは #hero-zoom 一枚だけ（画像ごとの scale 差＝切替時の縮みを根絶）
+    applyHeroZoom(0);
+    setHeroZoomPaused(false);
+
+    // フェードも rAF（iOS「動きを減らす」が CSS transition をほぼ 0 にする対策）
+    slides.forEach((slide, i) => {
+      slide.style.transition = 'none';
+      slide.style.opacity = i === 0 ? '1' : '0';
+    });
+
+    const crossfade = (from, to) => {
+      const start = performance.now();
+      to.classList.add('is-active');
+      to.style.zIndex = '2';
+      from.style.zIndex = '1';
+      const step = (now) => {
+        const t = Math.min(1, (now - start) / FADE_MS);
+        const e = t * t * (3 - 2 * t);
+        to.style.opacity = String(e);
+        from.style.opacity = String(1 - e);
+        if (t < 1) {
+          requestAnimationFrame(step);
+          return;
         }
-      );
-      heroZoomBySlide.set(slide, anim);
-      if (heroOffscreen) anim.pause();
+        from.classList.remove('is-active');
+        from.style.opacity = '0';
+        from.style.zIndex = '';
+        to.style.zIndex = '';
+      };
+      requestAnimationFrame(step);
     };
-
-    const bootZoom = () => {
-      slides.forEach((slide) => startZoom(slide));
-    };
-
-    const firstImg = slides[0]?.querySelector('img');
-    if (firstImg && !firstImg.complete) {
-      firstImg.addEventListener('load', bootZoom, { once: true });
-    } else {
-      bootZoom();
-    }
 
     if (slides.length > 1) {
       let index = 0;
       setInterval(() => {
-        slides[index].classList.remove('is-active');
+        const from = slides[index];
         index = (index + 1) % slides.length;
-        slides[index].classList.add('is-active');
+        crossfade(from, slides[index]);
       }, SLIDE_MS);
     }
   }

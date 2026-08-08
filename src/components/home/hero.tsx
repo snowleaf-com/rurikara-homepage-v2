@@ -39,31 +39,32 @@ export function Hero() {
   return (
     <>
       <div class="background" id="hero-slides" aria-hidden="true">
-        <div class="swiper" id="hero-swiper">
-          {SLIDE_META.map((slide, index) => (
-            <div
-              class={index === 0 ? 'slide is-active' : 'slide'}
-              data-slide
-              key={slide.jpg}
-            >
-              <picture>
-                <source
-                  type="image/webp"
-                  srcset={slideSrcSet(slide.sources)}
-                  sizes="100vw"
-                />
-                <img
-                  src={slide.jpg}
-                  alt=""
-                  width={slide.w}
-                  height={slide.h}
-                  decoding="async"
-                  fetchpriority={index === 0 ? 'high' : 'low'}
-                  loading={index === 0 ? undefined : 'lazy'}
-                />
-              </picture>
-            </div>
-          ))}
+        <div class="hero-zoom" id="hero-zoom">
+          <div class="swiper" id="hero-swiper">
+            {SLIDE_META.map((slide, index) => (
+              <div
+                class={index === 0 ? 'slide is-active' : 'slide'}
+                data-slide
+                key={slide.jpg}
+              >
+                <picture>
+                  <source
+                    type="image/webp"
+                    srcset={slideSrcSet(slide.sources)}
+                    sizes="100vw"
+                  />
+                  <img
+                    src={slide.jpg}
+                    alt=""
+                    width={slide.w}
+                    height={slide.h}
+                    decoding="async"
+                    fetchpriority={index === 0 ? 'high' : 'low'}
+                  />
+                </picture>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
       <div class="indexTop" id="top">
