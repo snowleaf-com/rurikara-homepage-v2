@@ -12,10 +12,17 @@ const ALLOWED_ORIGINS = [
   'https://www.ruri-kara.com'
 ];
 
+function isPrivateLanHost(hostname: string) {
+  if (hostname === 'localhost' || hostname === '127.0.0.1') return true;
+  if (/^10\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(hostname)) return true;
+  if (/^192\.168\.\d{1,3}\.\d{1,3}$/.test(hostname)) return true;
+  if (/^172\.(1[6-9]|2\d|3[0-1])\.\d{1,3}\.\d{1,3}$/.test(hostname)) return true;
+  return false;
+}
+
 function isLocalDevOrigin(value: string) {
   try {
-    const url = new URL(value);
-    return url.hostname === 'localhost' || url.hostname === '127.0.0.1';
+    return isPrivateLanHost(new URL(value).hostname);
   } catch {
     return false;
   }
