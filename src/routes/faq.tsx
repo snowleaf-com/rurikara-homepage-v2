@@ -3,7 +3,7 @@ import { Breadcrumb } from '../components/details/breadcrumb';
 import { DetailsHeader } from '../components/details/details-header';
 import { ContactCta } from '../components/home/contact-cta';
 
-const FAQ_ITEMS = [
+export const FAQ_ITEMS = [
   {
     q: 'はりって痛い？',
     a: 'はりは髪の毛と同じくらいの細さのもの（0.16mm）を使用します。<br/>一瞬チクっとする事もありますが、ほぼ痛みはありません。<br/>※一部ズーンとした、はり特有の【響き】が起こる事はあります。'

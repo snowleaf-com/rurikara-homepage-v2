@@ -4,6 +4,7 @@ export type ContentPageData = {
   slug: string;
   title: string;
   pageTitle: string;
+  description: string;
   breadcrumbs: Crumb[];
   symptoms: string[];
   symptomImg: string;
@@ -28,6 +29,8 @@ export const CONTENT_PAGES: ContentPageData[] = [
     slug: 'shoulder',
     title: '首の痛み・肩こり',
     pageTitle: '首の痛み・肩こり｜るりから鍼灸・接骨院',
+    description:
+      '沼津市井出のるりから鍼灸・接骨院。首の痛み・肩こり・頭痛・寝違えなど、はり灸・手技・電気施術で改善を目指します。',
     breadcrumbs: [
       { url: '/content', name: '施術について' },
       { url: '/content/shoulder', name: '首の痛み・肩こり' }
@@ -50,6 +53,8 @@ export const CONTENT_PAGES: ContentPageData[] = [
     slug: 'lumbar',
     title: '背中・腰の痛み',
     pageTitle: '背中・腰の痛み｜るりから鍼灸・接骨院',
+    description:
+      '沼津市井出のるりから鍼灸・接骨院。背中・腰痛、ギックリ腰、姿勢のつらさに対し、はり灸・手技・電気施術でアプローチします。',
     breadcrumbs: [
       { url: '/content', name: '施術について' },
       { url: '/content/lumbar', name: '背中・腰の痛み' }
@@ -72,6 +77,8 @@ export const CONTENT_PAGES: ContentPageData[] = [
     slug: 'knees-ankles',
     title: 'ひざ・太もも・足首の痛み',
     pageTitle: 'ひざ・太もも・足首の痛み｜るりから鍼灸・接骨院',
+    description:
+      '沼津市井出のるりから鍼灸・接骨院。ひざ・太もも・足首の痛み、捻挫後の不安、歩行時のつらさに施術で対応します。',
     breadcrumbs: [
       { url: '/content', name: '施術について' },
       { url: '/content/knees-ankles', name: 'ひざ・太もも・足首の痛み' }
@@ -94,6 +101,8 @@ export const CONTENT_PAGES: ContentPageData[] = [
     slug: 'sports',
     title: 'スポーツ障害について',
     pageTitle: 'スポーツ障害｜るりから鍼灸・接骨院',
+    description:
+      '沼津市井出のるりから鍼灸・接骨院。スポーツ障害のケア、ケガ後の復帰、ケガをしにくい身体づくりをサポートします。',
     breadcrumbs: [
       { url: '/content', name: '施術について' },
       { url: '/content/sports', name: 'スポーツ障害について' }
