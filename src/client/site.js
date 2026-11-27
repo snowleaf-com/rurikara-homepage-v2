@@ -57,8 +57,6 @@
 
   const onScroll = () => {
     const scrollY = window.scrollY;
-    // ヒーロー(100vh)から少し動いたらすぐ LINE を出す
-    const leftHeroTop = scrollY > 8;
     const scrolled = scrollY > 20;
     const isMobile = window.matchMedia('(max-width: 959px)').matches;
 
@@ -66,15 +64,15 @@
 
     if (social) {
       if (isMobile) {
-        social.classList.toggle('isShown', leftHeroTop);
-        social.classList.toggle('snsHidden', !leftHeroTop);
+        social.classList.toggle('isShown', scrolled);
+        social.classList.toggle('snsHidden', !scrolled);
       } else {
         social.classList.remove('isShown', 'snsHidden');
       }
     }
 
     if (lineMobile) {
-      if (isMobile && leftHeroTop) lineMobile.classList.add('visible');
+      if (isMobile && scrolled) lineMobile.classList.add('visible');
       else lineMobile.classList.remove('visible');
     }
 
