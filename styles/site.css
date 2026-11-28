@@ -3998,3 +3998,223 @@ table td {
     font-size: var(--fs-subhead) !important;
   }
 }
+
+/* ホームのSNS・来院案内。背景と境界は既存セクションの装飾を共用する。 */
+.homeVisitSection {
+  padding-bottom: 24px;
+}
+.homeVisitGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 32px;
+}
+.homeVisitDirections {
+  min-width: 0;
+}
+.homeVisitVideo > .youtubeLite,
+.homeVisitVideo > .youtubeLite__iframe {
+  width: 100%;
+  min-height: 0;
+  height: auto;
+  aspect-ratio: 16 / 9;
+}
+.homeVisitGrid .youtubeLite__thumb {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+@media (max-width: 768px) {
+  .homeVisitSection {
+    padding-bottom: 16px;
+  }
+  .homeVisitGrid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+}
+
+/* 来院案内は既存のセクション背景に直接配置する。 */
+.homeVisitPanel {
+  padding: 8px 0 24px;
+}
+.homeVisitIntro {
+  margin-bottom: 32px;
+}
+.homeVisitEyebrow {
+  display: inline-block;
+  margin-bottom: 12px;
+  padding: 4px 14px;
+  border-radius: 999px;
+  background: #ffeccd;
+  color: #111;
+  font-size: 14px;
+  font-weight: 700;
+}
+.homeVisitIntro h3 {
+  margin-bottom: 14px;
+  color: #111;
+  font-size: clamp(21px, 2.4vw, 28px);
+  line-height: 1.7;
+  font-weight: 700;
+}
+.homeVisitIntro h3 span {
+  color: #f7b133;
+}
+.homeVisitIntro > p:last-child {
+  color: #555;
+  font-size: 16px;
+  line-height: 1.9;
+}
+.homeVisitMap {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 420px;
+  margin: 0 auto;
+  font-family: inherit;
+}
+.homeVisitDirections figcaption,
+.homeVisitVideoCaption {
+  margin-top: 12px;
+  text-align: center;
+  color: #555;
+  font-size: 14px;
+  line-height: 1.7;
+}
+.homeVisitVideo {
+  min-width: 0;
+}
+.homeVisitVideo > .youtubeLite:focus-visible {
+  outline: 3px solid #f7b133;
+  outline-offset: 4px;
+}
+@media (max-width: 768px) {
+  .homeVisitIntro {
+    margin-bottom: 24px;
+  }
+}
+
+/* SNSは公開済みと準備中を同じサイズで並べる。 */
+.homeSocialGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+  max-width: 1100px;
+  margin: 32px auto 0;
+  padding: 0;
+  list-style: none;
+  text-align: left;
+}
+.homeSocialGrid > li {
+  min-width: 0;
+}
+.homeSocialCard {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 26px 22px 20px;
+  border: 1px solid #e6dadd;
+  border-radius: 18px;
+  background: #fff;
+  color: #302e33;
+  box-shadow: 0 4px 16px rgba(85, 51, 64, 0.03);
+}
+.homeSocialCardTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.homeSocialIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  border-radius: 14px;
+}
+.homeSocialIcon--youtube { color: #d83b43; background: #fff0f0; }
+.homeSocialIcon--instagram { color: #a7447c; background: #faedf5; }
+.homeSocialIcon--tiktok { color: #293a40; background: #edf5f5; }
+.homeSocialBadge {
+  padding: 3px 9px;
+  border: 1px solid #e6dadd;
+  border-radius: 999px;
+  color: #74636b;
+  font-size: 12px;
+  line-height: 1.7;
+  white-space: nowrap;
+}
+.homeSocialCard h3 {
+  margin: 0 0 24px;
+  color: inherit;
+  font-size: 23px;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: -0.02em;
+}
+.homeSocialCard h3 > span {
+  display: block;
+  margin-top: 5px;
+  color: #665b62;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+.homeSocialCardBottom {
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid #f0e9eb;
+  color: #766970;
+  font-size: 13px;
+  line-height: 1.7;
+}
+.homeSocialCardLink {
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.homeSocialCardLink .homeSocialCardBottom {
+  color: #a33440;
+}
+.homeSocialCardLink:focus-visible {
+  outline: 3px solid #a33440;
+  outline-offset: 4px;
+}
+@media (hover: hover) {
+  .homeSocialCardLink:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(85, 51, 64, 0.09);
+  }
+}
+@media (max-width: 959px) {
+  .homeSocialGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-width: 640px;
+    gap: 14px;
+  }
+}
+@media (max-width: 480px) {
+  .homeSocialCard {
+    padding: 18px 14px 16px;
+    border-radius: 14px;
+  }
+  .homeSocialCardTop {
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+  .homeSocialIcon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+  }
+  .homeSocialCard h3 { font-size: 20px; }
+  .homeSocialCard h3 > span { font-size: 14px; }
+  .homeSocialCardBottom { font-size: 13px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .homeSocialCardLink { transition: none; }
+}
