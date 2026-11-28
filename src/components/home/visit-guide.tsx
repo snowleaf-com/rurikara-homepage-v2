@@ -19,18 +19,18 @@ export function VisitGuide() {
               <title id="visit-map-title">駐車場と建物北東側の入口の案内図</title>
               <desc id="visit-map-desc">建物の左側と下側に道路があります。駐車場は建物の上側にあり、入口は建物右上の北東側です。</desc>
               <rect width="420" height="300" rx="16" fill="#fff" />
-              <path d="M62 0V264M0 264H420" fill="none" stroke="#e0e7e9" stroke-width="38" />
+              <path d="M62 0V264M0 264H420" fill="none" stroke="#ddd" stroke-width="38" />
               <path d="M62 0V264M0 264H420" fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="8 9" />
-              <rect x="121" y="86" width="202" height="135" fill="none" stroke="#bacbd0" stroke-width="2" />
-              <text x="222" y="150" text-anchor="middle" fill="#423332" font-size="19" font-weight="700">るりから</text>
-              <text x="222" y="178" text-anchor="middle" fill="#586a70" font-size="14">鍼灸・接骨院</text>
+              <rect x="121" y="86" width="202" height="135" fill="none" stroke="#aaa" stroke-width="2" />
+              <text x="222" y="150" text-anchor="middle" fill="#111" font-size="19" font-weight="700">るりから</text>
+              <text x="222" y="178" text-anchor="middle" fill="#555" font-size="14">鍼灸・接骨院</text>
               <rect x="122" y="17" width="201" height="45" rx="8" fill="#ffeccd" />
-              <text x="222" y="46" text-anchor="middle" fill="#60431d" font-size="18" font-weight="700">駐車場</text>
-              <path d="M264 71H352V100H327M122 239H352V123H327" fill="none" stroke="#d76c28" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
-              <path d="M333 94L326 100L333 106M333 117L326 123L333 129" fill="none" stroke="#d76c28" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+              <text x="222" y="46" text-anchor="middle" fill="#111" font-size="18" font-weight="700">駐車場</text>
+              <path d="M264 71H352V100H327M122 239H352V123H327" fill="none" stroke="#f7b133" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M333 94L326 100L333 106M333 117L326 123L333 129" fill="none" stroke="#f7b133" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
               <path d="M323 96V128" stroke="#f7b133" stroke-width="7" />
-              <rect x="258" y="187" width="124" height="35" rx="17" fill="#fff2dd" />
-              <text x="320" y="210" text-anchor="middle" fill="#854419" font-size="15" font-weight="700">入口（北東側）</text>
+              <rect x="258" y="187" width="124" height="35" rx="17" fill="#ffeccd" />
+              <text x="320" y="210" text-anchor="middle" fill="#111" font-size="15" font-weight="700">入口（北東側）</text>
             </svg>
             <figcaption>駐車場・入口の案内図</figcaption>
           </figure>
